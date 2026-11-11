@@ -17,3 +17,6 @@ pythonpath = [".", "tests"]
 
 [tool.ruff]
 line-length = 119
+
+[tool.ruff.lint.per-file-ignores]
+"bench/op_coverage.py" = ["BLE001"]

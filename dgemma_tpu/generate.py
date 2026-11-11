@@ -1,9 +1,11 @@
 import math
+import time
 from dataclasses import dataclass
 
 import torch
 
 from .cache import BlockDiffusionStaticCache, to_attention_bias
+from .runtime import synchronize
 from .sampler import (
     DeviceNoise,
     entropy_bound_acceptance,
@@ -33,6 +35,10 @@ class BlockDiffusionOutput:
             Length of the prompt passed by the caller.
         pad_token_id (`int`):
             Padding token id used in `sequences`.
+        prefill_seconds (`float`, *optional*):
+            Wall-clock time of the prompt prefill, set when profiling.
+        canvas_seconds (`list[float]`, *optional*):
+            Wall-clock time of each canvas, set when profiling.
     """
 
     sequences: torch.Tensor
@@ -42,6 +48,8 @@ class BlockDiffusionOutput:
     num_stop_checks: int
     prompt_length: int
     pad_token_id: int
+    prefill_seconds: float | None = None
+    canvas_seconds: list[float] | None = None
 
     @property
     def tokens_per_forward(self) -> torch.Tensor:
@@ -143,7 +151,9 @@ class StaticBlockDiffusionGenerator:
             self._extend_cache = torch.compile(self._extend_cache_impl, backend=compile_backend, **options)
 
     @torch.no_grad()
-    def generate(self, input_ids: torch.Tensor, attention_mask: torch.Tensor | None = None) -> BlockDiffusionOutput:
+    def generate(
+        self, input_ids: torch.Tensor, attention_mask: torch.Tensor | None = None, profile: bool = False
+    ) -> BlockDiffusionOutput:
         """
         Generates up to `max_new_tokens` tokens for a batch of text prompts.
 
@@ -152,6 +162,8 @@ class StaticBlockDiffusionGenerator:
                 Prompt token ids.
             attention_mask (`torch.Tensor` of shape `(batch_size, prompt_length)`, *optional*):
                 Mask that is 0 for prompt padding.
+            profile (`bool`, *optional*, defaults to `False`):
+                Whether to time the prefill and each canvas, which adds one host synchronization per stage.
 
         Returns:
             [`BlockDiffusionOutput`]: Generated sequences and decoding statistics.
@@ -172,12 +184,16 @@ class StaticBlockDiffusionGenerator:
         finished_sequences = torch.zeros(batch_size, dtype=torch.bool, device=device)
         forward_passes = torch.zeros(batch_size, dtype=torch.int32, device=device)
 
+        stage_start = _stage_clock(device, profile)
         position_ids = self._prefill(state, input_ids, token_valid)
+        prefill_seconds = _stage_elapsed(device, profile, stage_start)
+        canvas_seconds = []
 
         num_canvases = 0
         num_denoising_steps = 0
         num_stop_checks = 0
         for canvas_index in range(self.num_canvases):
+            stage_start = _stage_clock(device, profile)
             canvas = self.noise.tokens((batch_size, canvas_length), self.vocab_size, device)
             # A distinct tensor avoids an input-aliasing guard that would compile the first step separately.
             argmax_canvas = canvas.clone()
@@ -208,10 +224,13 @@ class StaticBlockDiffusionGenerator:
                 state, argmax_canvas, finished_sequences, eos_token_ids
             )
             num_canvases += 1
-            if canvas_index + 1 == self.num_canvases or bool(finished_sequences.all()):
+            is_last_canvas = canvas_index + 1 == self.num_canvases or bool(finished_sequences.all())
+            if not is_last_canvas:
+                self._extend_cache(state, committed_canvas, position_ids)
+                position_ids = position_ids + canvas_length
+            canvas_seconds.append(_stage_elapsed(device, profile, stage_start))
+            if is_last_canvas:
                 break
-            self._extend_cache(state, committed_canvas, position_ids)
-            position_ids = position_ids + canvas_length
 
         generated_end = bucketed_length + num_canvases * canvas_length
         return BlockDiffusionOutput(
@@ -222,6 +241,8 @@ class StaticBlockDiffusionGenerator:
             num_stop_checks=num_stop_checks,
             prompt_length=prompt_length,
             pad_token_id=self.pad_token_id,
+            prefill_seconds=prefill_seconds,
+            canvas_seconds=canvas_seconds if profile else None,
         )
 
     def _get_state(self, batch_size: int, max_length: int, device: torch.device) -> _GenerationState:
@@ -365,3 +386,17 @@ class StaticBlockDiffusionGenerator:
             position_ids=position_ids,
         )
         cache.advance(token_valid)
+
+
+def _stage_clock(device: torch.device, profile: bool) -> float | None:
+    if not profile:
+        return None
+    synchronize(device)
+    return time.perf_counter()
+
+
+def _stage_elapsed(device: torch.device, profile: bool, start: float | None) -> float | None:
+    if not profile:
+        return None
+    synchronize(device)
+    return time.perf_counter() - start
