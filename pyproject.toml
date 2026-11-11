@@ -1,0 +1,19 @@
+[project]
+name = "dgemma-tpu"
+version = "0.1.0"
+description = "Static-shape block-diffusion decoding for DiffusionGemma on TorchTPU"
+requires-python = ">=3.11"
+dependencies = ["torch>=2.11,<=2.15", "transformers>=5.22", "accelerate"]
+
+[project.optional-dependencies]
+dev = ["pytest", "ruff"]
+
+[tool.setuptools.packages.find]
+include = ["dgemma_tpu*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = [".", "tests"]
+
+[tool.ruff]
+line-length = 119
