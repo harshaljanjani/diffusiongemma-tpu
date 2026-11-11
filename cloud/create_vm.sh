@@ -31,7 +31,6 @@ for ZONE in "$@"; do
     --instance-termination-action=DELETE \
     --max-run-duration="$MAX_RUN_DURATION" \
     --boot-disk-size="${DISK_GB}GB" \
-    --boot-disk-type=pd-balanced \
     --scopes=storage-rw,logging-write \
     --metadata-from-file=startup-script="$BOOTSTRAP"; then
     echo "created $NAME in $ZONE"
