@@ -38,30 +38,54 @@ per canvas):
 ```python
 import torch
 from transformers import (
-    DiffusionGemmaConfig, DiffusionGemmaForBlockDiffusion, DiffusionGemmaTextConfig, Gemma4VisionConfig,
+    DiffusionGemmaConfig,
+    DiffusionGemmaForBlockDiffusion,
+    DiffusionGemmaTextConfig,
+    Gemma4VisionConfig,
 )
+
 
 def build(sliding_window):
     torch.manual_seed(0)
     text_config = DiffusionGemmaTextConfig(
-        vocab_size=512, hidden_size=64, intermediate_size=128, num_hidden_layers=2, num_attention_heads=4,
-        num_key_value_heads=2, head_dim=16, sliding_window=sliding_window, max_position_embeddings=1024,
-        layer_types=["sliding_attention", "full_attention"], pad_token_id=0, eos_token_id=1, bos_token_id=2,
-        num_experts=4, top_k_experts=2, moe_intermediate_size=32,
+        vocab_size=512,
+        hidden_size=64,
+        intermediate_size=128,
+        num_hidden_layers=2,
+        num_attention_heads=4,
+        num_key_value_heads=2,
+        head_dim=16,
+        sliding_window=sliding_window,
+        max_position_embeddings=1024,
+        layer_types=["sliding_attention", "full_attention"],
+        pad_token_id=0,
+        eos_token_id=1,
+        bos_token_id=2,
+        num_experts=4,
+        top_k_experts=2,
+        moe_intermediate_size=32,
     )
     vision_config = Gemma4VisionConfig(
         hidden_size=32, intermediate_size=64, num_hidden_layers=1, num_attention_heads=2, image_size=32, patch_size=16
     )
     config = DiffusionGemmaConfig(
-        text_config=text_config, vision_config=vision_config, canvas_length=16,
-        boi_token_id=509, eoi_token_id=510, image_token_id=511,
+        text_config=text_config,
+        vision_config=vision_config,
+        canvas_length=16,
+        boi_token_id=509,
+        eoi_token_id=510,
+        image_token_id=511,
     )
     return DiffusionGemmaForBlockDiffusion(config).eval()
+
 
 def run(model, input_ids, cache_implementation):
     torch.manual_seed(1)
     kwargs = {"cache_implementation": cache_implementation} if cache_implementation else {}
-    return model.generate(input_ids, max_new_tokens=48, max_denoising_steps=6, disable_compile=True, **kwargs).sequences
+    return model.generate(
+        input_ids, max_new_tokens=48, max_denoising_steps=6, disable_compile=True, **kwargs
+    ).sequences
+
 
 input_ids = torch.randint(3, 500, (2, 12))
 for sliding_window in (512, 24):

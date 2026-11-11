@@ -10,6 +10,7 @@ from transformers import (
     DiffusionGemmaForBlockDiffusion,
     Gemma4ForConditionalGeneration,
 )
+from transformers.distributed.configuration_utils import DistributedConfig
 from transformers.initialization import no_init_weights
 
 DIFFUSION_MODEL_ID = "google/diffusiongemma-26B-A4B-it"
@@ -25,6 +26,7 @@ def load_model(
     dtype: torch.dtype,
     attn_implementation: str | None = None,
     experts_implementation: str | None = None,
+    tensor_parallel: bool = False,
 ):
     """
     Loads a DiffusionGemma or Gemma 4 model for benchmarking.
@@ -43,6 +45,8 @@ def load_model(
             Attention implementation override.
         experts_implementation (`str`, *optional*):
             Mixture-of-experts implementation override.
+        tensor_parallel (`bool`, *optional*, defaults to `False`):
+            Whether to shard pretrained weights across the chips of a `torchrun` launch with the model's plan.
 
     Returns:
         `PreTrainedModel`: The model in evaluation mode.
@@ -64,6 +68,10 @@ def load_model(
         return model.to(dtype).to(device).eval()
 
     model_id = TINY_MODEL_ID if spec == "tiny" else spec
+    if tensor_parallel:
+        distributed_config = DistributedConfig(tp_plan="auto")
+        model = model_class.from_pretrained(model_id, dtype=dtype, distributed_config=distributed_config, **overrides)
+        return model.eval()
     model = model_class.from_pretrained(model_id, dtype=dtype, **overrides)
     return model.to(device).eval()
 
