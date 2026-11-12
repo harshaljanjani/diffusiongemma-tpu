@@ -8,6 +8,7 @@ chmod -R 777 "$WORK_DIR" /opt/hf-cache /opt/tpu-compile-cache
 
 export HOME=/root
 export UV_INSTALL_DIR=/usr/local/bin
+export UV_PYTHON_INSTALL_DIR=/opt/dgemma/python
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
 uv venv --python 3.12 "$WORK_DIR/venv"

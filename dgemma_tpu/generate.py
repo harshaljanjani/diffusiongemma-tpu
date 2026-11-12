@@ -69,6 +69,7 @@ class _GenerationState:
     initial_soft_embeddings: torch.Tensor
     initial_finished: torch.Tensor
     initial_history: torch.Tensor
+    temperatures: list[torch.Tensor]
 
 
 class StaticBlockDiffusionGenerator:
@@ -180,7 +181,6 @@ class StaticBlockDiffusionGenerator:
 
         state = self._get_state(batch_size, bucketed_length + self.num_canvases * canvas_length, device)
         eos_token_ids = torch.tensor(self.eos_token_ids, dtype=torch.long, device=device)
-        temperatures = torch.tensor(self.temperature_schedule, dtype=torch.float32, device=device).unbind(0)
         finished_sequences = torch.zeros(batch_size, dtype=torch.bool, device=device)
         forward_passes = torch.zeros(batch_size, dtype=torch.int32, device=device)
 
@@ -200,7 +200,7 @@ class StaticBlockDiffusionGenerator:
             soft_embeddings = state.initial_soft_embeddings
             finished = state.initial_finished
             history = state.initial_history
-            for step_index, temperature in enumerate(temperatures):
+            for step_index, temperature in enumerate(state.temperatures):
                 canvas, argmax_canvas, soft_embeddings, finished, history, forward_passes = self._denoise_step(
                     state,
                     canvas,
@@ -271,6 +271,11 @@ class StaticBlockDiffusionGenerator:
             initial_history=torch.full(
                 (history_length, batch_size, self.canvas_length), -1, dtype=torch.long, device=device
             ),
+            # One tensor per step: slices of a shared tensor differ in storage offset, which TorchTPU guards on.
+            temperatures=[
+                torch.tensor(temperature, dtype=torch.float32, device=device)
+                for temperature in self.temperature_schedule
+            ],
         )
         self._states[key] = state
         return state
