@@ -1,0 +1,118 @@
+/opt/dgemma/venv/lib/python3.12/site-packages/torch_tpu/__init__.py:37: UserWarning: <TorchTpu/Performance/TcMalloc/> tcmalloc is not loaded; TorchTPU host performance may be degraded due to glibc ptmalloc contention. Preload libtcmalloc before starting Python (e.g. LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libtcmalloc_minimal.so.4), or set PYTHONWARNINGS="ignore:<TorchTpu/Performance/TcMalloc/" to suppress this warning.
+  _tcmalloc_check.check_tcmalloc()
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1794298880.944197   24171 pjrt_api.cc:119] GetPjrtApi was found for TPU at /opt/dgemma/venv/lib/python3.12/site-packages/libtpu/libtpu.so
+I0000 00:00:1794298882.038851   24171 device_rt.cc:166] PjRt runtime initialization deferred for tpu
+Successfully renamed PrivateUse1 backend to 'tpu'. Device: device(type='tpu')
+Registered Python module for 'tpu'.
+Device type: tpu, Device index: default
+Initializing TPU distributed runtime
+I0000 00:00:1794298882.041548   24171 libtpu_version.cc:63] Setting libtpu version to: 0.0.52
+I0000 00:00:1794298883.124026   24171 pjrt_api.cc:168] The PJRT plugin has PJRT API version 0.117. The framework PJRT API version is 0.116.
+I0000 00:00:1794298884.355441   24171 pjrt_c_api_client.cc:187] PjRtCApiClient created.
+I0000 00:00:1794298897.350854   24388 compilation_cache_utils.cc:218] Tier-3 compilation cache root directory: /opt/tpu-compile-cache
+I0000 00:00:1794298897.350892   24388 tier2_compilation_cache.cc:72] Tier-2 compilation cache is enabled with name 'default' because tier-3 is enabled.
+I0000 00:00:1794298897.350897   24388 tier3_compilation_cache.cc:57] Backup compilation for tier-3 cache read is enabled by default.
+I0000 00:00:1794298897.353031   24499 compilation_cache_utils.cc:99] Tier-2 cache uses TorchTPU binary fingerprint: db58e6e353078fff
+  based on TorchTPU binary version 5 and PjRt version:
+TFRT TPU v6 lite
+Built on Nov 5 2026 01:07:28 (1793869648) cl/1014260217
+C API version: 0.117
+[W1110 08:21:37.669659940 env_vars.h:405] Warning: <TorchTpu/ApiStage/ExperimentalApi/> the TORCH_TPU_TIER3_COMPILATION_CACHE_ROOT environment variable is an experimental feature and may change or be removed without notice. (function operator())
+Traceback (most recent call last):
+  File "/opt/dgemma/repo/bench/run_diffusion.py", line 140, in <module>
+    main()
+  File "/opt/dgemma/repo/bench/run_diffusion.py", line 97, in main
+    generate()
+  File "/opt/dgemma/repo/bench/run_diffusion.py", line 46, in generate
+    output = generator.generate(input_ids, profile=True)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/dgemma/venv/lib/python3.12/site-packages/torch/utils/_contextlib.py", line 158, in no_grad
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/dgemma/repo/dgemma_tpu/generate.py", line 188, in generate
+    position_ids = self._prefill(state, input_ids, token_valid)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/dgemma/venv/lib/python3.12/site-packages/torch/_dynamo/eval_frame.py", line 1276, in compile_wrapper
+    raise e.with_traceback(
+torch._dynamo.exc.UserError: Consider annotating your code using torch._check*(). Could not extract specialized integer from data-dependent expression u0 (unhinted: u0).  (Size-like symbols: u0)
+
+
+Caused by: for expert_idx in expert_hit:  # transformers/models/diffusion_gemma/modeling_diffusion_gemma.py:568 in forward (_dynamo/variables/tensor.py:3083 in evaluate_expr)
+For more information, run with TORCH_LOGS="dynamic"
+For extended logs when we create symbols, also add TORCHDYNAMO_EXTENDED_DEBUG_CREATE_SYMBOL="u0"
+If you suspect the guard was triggered from C++, add TORCHDYNAMO_EXTENDED_DEBUG_CPP=1
+For more debugging help, see https://docs.google.com/document/d/1HSuTTVvYH1pTew89Rtpeu84Ht3nQEFTYhAX3Ypa_xJs/edit?usp=sharing
+
+User Stack (most recent call last):
+  (snipped, see stack below for prefix)
+  File "/opt/dgemma/repo/dgemma_tpu/generate.py", line 292, in _prefill_impl
+    self.model.model.encoder(
+  File "/opt/dgemma/venv/lib/python3.12/site-packages/transformers/utils/generic.py", line 1081, in wrapper
+    output = func(self, *args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/dgemma/venv/lib/python3.12/site-packages/transformers/utils/generic.py", line 943, in wrapper
+    output = func(self, *args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/dgemma/venv/lib/python3.12/site-packages/transformers/models/diffusion_gemma/modeling_diffusion_gemma.py", line 1122, in forward
+    outputs = self.language_model(
+              ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/dgemma/venv/lib/python3.12/site-packages/transformers/utils/generic.py", line 1081, in wrapper
+    output = func(self, *args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/dgemma/venv/lib/python3.12/site-packages/transformers/utils/output_capturing.py", line 287, in wrapper
+    outputs = func(self, *args, **kwargs)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/dgemma/venv/lib/python3.12/site-packages/transformers/models/diffusion_gemma/modeling_diffusion_gemma.py", line 959, in forward
+    hidden_states = encoder_layer(
+                    ^^^^^^^^^^^^^^
+  File "/opt/dgemma/venv/lib/python3.12/site-packages/transformers/models/diffusion_gemma/modeling_diffusion_gemma.py", line 645, in forward
+    hidden_states_2 = self.experts(hidden_states_2_for_experts, top_k_index, top_k_weights)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/dgemma/venv/lib/python3.12/site-packages/transformers/integrations/moe.py", line 602, in forward
+    return experts_forward(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/dgemma/venv/lib/python3.12/site-packages/transformers/models/diffusion_gemma/modeling_diffusion_gemma.py", line 568, in forward
+    for expert_idx in expert_hit:
+                      ^^^^^^^^^^
+
+For C++ stack trace, run with TORCHDYNAMO_EXTENDED_DEBUG_CPP=1
+For more information about this error, see: https://pytorch.org/docs/main/generated/exportdb/index.html#constrain-as-size-example
+
+from user code:
+   File "/opt/dgemma/repo/dgemma_tpu/generate.py", line 292, in _prefill_impl
+    self.model.model.encoder(
+  File "/opt/dgemma/venv/lib/python3.12/site-packages/transformers/utils/generic.py", line 1081, in wrapper
+    output = func(self, *args, **kwargs)
+             ~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/dgemma/venv/lib/python3.12/site-packages/transformers/utils/generic.py", line 943, in wrapper
+    output = func(self, *args, **kwargs)
+             ~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/dgemma/venv/lib/python3.12/site-packages/transformers/models/diffusion_gemma/modeling_diffusion_gemma.py", line 1122, in forward
+    outputs = self.language_model(
+  File "/opt/dgemma/venv/lib/python3.12/site-packages/transformers/utils/generic.py", line 1081, in wrapper
+    output = func(self, *args, **kwargs)
+             ~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/dgemma/venv/lib/python3.12/site-packages/transformers/utils/output_capturing.py", line 287, in wrapper
+    outputs = func(self, *args, **kwargs)
+              ~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/dgemma/venv/lib/python3.12/site-packages/transformers/models/diffusion_gemma/modeling_diffusion_gemma.py", line 959, in forward
+    hidden_states = encoder_layer(
+  File "/opt/dgemma/venv/lib/python3.12/site-packages/transformers/models/diffusion_gemma/modeling_diffusion_gemma.py", line 645, in forward
+    hidden_states_2 = self.experts(hidden_states_2_for_experts, top_k_index, top_k_weights)
+                      ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/dgemma/venv/lib/python3.12/site-packages/transformers/integrations/moe.py", line 602, in forward
+    return experts_forward(self, *args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/dgemma/venv/lib/python3.12/site-packages/transformers/models/diffusion_gemma/modeling_diffusion_gemma.py", line 568, in forward
+    for expert_idx in expert_hit:
+                      ^^^^^^^^^^
+
+Set TORCHDYNAMO_VERBOSE=1 for the internal stack trace (please do this especially if you're reporting a bug to PyTorch). For even more developer context, set TORCH_LOGS="+dynamo"
+
+I0000 00:00:1794298899.158654   24171 compilation_cache.cc:356] Compilation cache evicted.
+I0000 00:00:1794298899.158729   24171 compilation_cache.cc:203] CompilationCache final stats: num_cache_reqs=24
+num_cache_hits=12 {50.0%}
+num_compilations=0
+peak_compilation_memory_bytes=unknown
+

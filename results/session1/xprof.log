@@ -1,0 +1,42 @@
+/opt/dgemma/venv/lib/python3.12/site-packages/torch_tpu/__init__.py:37: UserWarning: <TorchTpu/Performance/TcMalloc/> tcmalloc is not loaded; TorchTPU host performance may be degraded due to glibc ptmalloc contention. Preload libtcmalloc before starting Python (e.g. LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libtcmalloc_minimal.so.4), or set PYTHONWARNINGS="ignore:<TorchTpu/Performance/TcMalloc/" to suppress this warning.
+  _tcmalloc_check.check_tcmalloc()
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1794299491.653776   36108 pjrt_api.cc:119] GetPjrtApi was found for TPU at /opt/dgemma/venv/lib/python3.12/site-packages/libtpu/libtpu.so
+I0000 00:00:1794299492.738521   36108 device_rt.cc:166] PjRt runtime initialization deferred for tpu
+Successfully renamed PrivateUse1 backend to 'tpu'. Device: device(type='tpu')
+Registered Python module for 'tpu'.
+Device type: tpu, Device index: default
+Initializing TPU distributed runtime
+I0000 00:00:1794299492.741234   36108 libtpu_version.cc:63] Setting libtpu version to: 0.0.52
+I0000 00:00:1794299494.715295   36108 pjrt_api.cc:168] The PJRT plugin has PJRT API version 0.117. The framework PJRT API version is 0.116.
+I0000 00:00:1794299496.197244   36108 pjrt_c_api_client.cc:187] PjRtCApiClient created.
+I0000 00:00:1794299508.695659   36361 compilation_cache_utils.cc:218] Tier-3 compilation cache root directory: /opt/tpu-compile-cache
+I0000 00:00:1794299508.695712   36361 tier2_compilation_cache.cc:72] Tier-2 compilation cache is enabled with name 'default' because tier-3 is enabled.
+I0000 00:00:1794299508.695720   36361 tier3_compilation_cache.cc:57] Backup compilation for tier-3 cache read is enabled by default.
+I0000 00:00:1794299508.697649   36449 compilation_cache_utils.cc:99] Tier-2 cache uses TorchTPU binary fingerprint: db58e6e353078fff
+  based on TorchTPU binary version 5 and PjRt version:
+TFRT TPU v6 lite
+Built on Nov 5 2026 01:07:28 (1793869648) cl/1014260217
+C API version: 0.117
+I0000 00:00:1794299512.656621   36448 tier3_compilation_cache.cc:84] Tier-3 compilation cache path for this process: /opt/tpu-compile-cache/db58e6e353078fff
+[W1110 08:32:22.357764694 env_vars.h:405] Warning: <TorchTpu/ApiStage/ExperimentalApi/> the TORCH_TPU_TIER3_COMPILATION_CACHE_ROOT environment variable is an experimental feature and may change or be removed without notice. (function operator())
+/opt/dgemma/repo/bench/xprof_capture.py:43: UserWarning: <TorchTpu/ApiStage/ExperimentalApi/> TpuProfilerConfig is experimental and subject to change: torch.tpu.profiler.TpuProfilerConfig is experimental and subject to change.
+  profiler_kwargs["experimental_config"] = TpuProfilerConfig()
+USDT:2026-11-10 08:32:22 36108:36108 SyncActivityProfilerHandler.cpp:39] profiler_start
+I0000 00:00:1794299542.071719   36108 profiler_session.cc:171] Profiler session initializing.
+I0000 00:00:1794299542.071736   36108 profiler_session.cc:186] Profiler session started.
+I0000 00:00:1794299542.094638   36108 tpu_profiler_plugin.cc:448] Successfully created Tpu ProfilerSession!
+I0000 00:00:1794299542.418372   36108 profiler_session.cc:134] Profiler session collecting data.
+I0000 00:00:1794299543.383034   36108 tpu_profiler_plugin.cc:501] TpuKinetoProfilerSession::stop() CollectData status: OK
+I0000 00:00:1794299543.383083   36108 tpu_profiler_plugin.cc:503] TpuKinetoProfilerSession::stop() Collected XSpace planes: 7
+I0000 00:00:1794299543.416626   36108 tpu_profiler_plugin.cc:543] Successfully wrote XPlane to /tmp/plugins/profile/2026_11_10_08_32_23/dgemma-s1.xplane.pb
+I0000 00:00:1794299543.416658   36108 profiler_session.cc:217] Profiler session tear down.
+USDT:2026-11-10 08:32:23 36108:36108 SyncActivityProfilerHandler.cpp:46] profiler_stop
+[W1110 08:32:23.935617237 collection.cpp:1188] Warning: Detected an event which was likely passed to kineto by the PyTorch profiler, but is not present in the set of known events: PJRT_LoadedExecutable_Execute This most likely means that Kineto has not maintained address stability for this event. Please report this to the PyTorch team. (function operator())
+trace written to /opt/dgemma/repo/results/session1/xprof
+I0000 00:00:1794299544.920528   36108 compilation_cache.cc:356] Compilation cache evicted.
+I0000 00:00:1794299544.920591   36108 compilation_cache.cc:203] CompilationCache final stats: num_cache_reqs=54
+num_cache_hits=33 {61.1%}
+num_compilations=3
+peak_compilation_memory_bytes=unknown
+

@@ -1,0 +1,116 @@
+/opt/dgemma/venv/lib/python3.12/site-packages/torch_tpu/__init__.py:37: UserWarning: <TorchTpu/Performance/TcMalloc/> tcmalloc is not loaded; TorchTPU host performance may be degraded due to glibc ptmalloc contention. Preload libtcmalloc before starting Python (e.g. LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libtcmalloc_minimal.so.4), or set PYTHONWARNINGS="ignore:<TorchTpu/Performance/TcMalloc/" to suppress this warning.
+  _tcmalloc_check.check_tcmalloc()
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1794298902.887391   24525 pjrt_api.cc:119] GetPjrtApi was found for TPU at /opt/dgemma/venv/lib/python3.12/site-packages/libtpu/libtpu.so
+I0000 00:00:1794298903.970940   24525 device_rt.cc:166] PjRt runtime initialization deferred for tpu
+Successfully renamed PrivateUse1 backend to 'tpu'. Device: device(type='tpu')
+Registered Python module for 'tpu'.
+Device type: tpu, Device index: default
+Initializing TPU distributed runtime
+I0000 00:00:1794298903.973625   24525 libtpu_version.cc:63] Setting libtpu version to: 0.0.52
+I0000 00:00:1794298905.055952   24525 pjrt_api.cc:168] The PJRT plugin has PJRT API version 0.117. The framework PJRT API version is 0.116.
+I0000 00:00:1794298906.275573   24525 pjrt_c_api_client.cc:187] PjRtCApiClient created.
+I0000 00:00:1794298918.681549   24742 compilation_cache_utils.cc:218] Tier-3 compilation cache root directory: /opt/tpu-compile-cache
+I0000 00:00:1794298918.681583   24742 tier2_compilation_cache.cc:72] Tier-2 compilation cache is enabled with name 'default' because tier-3 is enabled.
+I0000 00:00:1794298918.681588   24742 tier3_compilation_cache.cc:57] Backup compilation for tier-3 cache read is enabled by default.
+I0000 00:00:1794298918.683819   24855 compilation_cache_utils.cc:99] Tier-2 cache uses TorchTPU binary fingerprint: db58e6e353078fff
+  based on TorchTPU binary version 5 and PjRt version:
+TFRT TPU v6 lite
+Built on Nov 5 2026 01:07:28 (1793869648) cl/1014260217
+C API version: 0.117
+[W1110 08:21:58.011926971 env_vars.h:405] Warning: <TorchTpu/ApiStage/ExperimentalApi/> the TORCH_TPU_TIER3_COMPILATION_CACHE_ROOT environment variable is an experimental feature and may change or be removed without notice. (function operator())
+I0000 00:00:1794298922.606499   24854 tier3_compilation_cache.cc:84] Tier-3 compilation cache path for this process: /opt/tpu-compile-cache/db58e6e353078fff
+Traceback (most recent call last):
+  File "/opt/dgemma/repo/bench/run_diffusion.py", line 140, in <module>
+    main()
+  File "/opt/dgemma/repo/bench/run_diffusion.py", line 97, in main
+    generate()
+  File "/opt/dgemma/repo/bench/run_diffusion.py", line 46, in generate
+    output = generator.generate(input_ids, profile=True)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/dgemma/venv/lib/python3.12/site-packages/torch/utils/_contextlib.py", line 158, in no_grad
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/dgemma/repo/dgemma_tpu/generate.py", line 188, in generate
+    position_ids = self._prefill(state, input_ids, token_valid)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/dgemma/venv/lib/python3.12/site-packages/torch/_dynamo/eval_frame.py", line 1282, in compile_wrapper
+    raise e.remove_dynamo_frames() from None
+  File "/opt/dgemma/venv/lib/python3.12/site-packages/torch/_dynamo/output_graph.py", line 3324, in _call_user_compiler
+    raise BackendCompilerFailed(
+  File "/opt/dgemma/venv/lib/python3.12/site-packages/torch/_dynamo/output_graph.py", line 3292, in _call_user_compiler
+    compiled_fn = compiler_fn(gm, example_inputs)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/dgemma/venv/lib/python3.12/site-packages/torch/_dynamo/repro/after_dynamo.py", line 163, in __call__
+    compiled_gm = compiler_fn(gm, example_inputs)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/dgemma/venv/lib/python3.12/site-packages/torch/__init__.py", line 3050, in __call__
+    return self.compiler_fn(model_, inputs_, **self.kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/dgemma/venv/lib/python3.12/site-packages/torch_tpu/_internal/compile/_backend.py", line 812, in __call__
+    result = aot_autograd(
+             ^^^^^^^^^^^^^
+  File "/opt/dgemma/venv/lib/python3.12/site-packages/torch/_dynamo/backends/common.py", line 156, in __call__
+    cg = aot_module_simplified(
+         ^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/dgemma/venv/lib/python3.12/site-packages/torch/_functorch/aot_autograd.py", line 1250, in aot_module_simplified
+    compiled_fn, _ = aot_stage2_compile(
+                     ^^^^^^^^^^^^^^^^^^^
+  File "/opt/dgemma/venv/lib/python3.12/site-packages/torch/_functorch/_aot_autograd/graph_compile.py", line 375, in aot_stage2_compile
+    return aot_stage2_inference(
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/dgemma/venv/lib/python3.12/site-packages/torch/_functorch/_aot_autograd/graph_compile.py", line 499, in aot_stage2_inference
+    compiled_fw = _aot_stage2b_inference_compile(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/dgemma/venv/lib/python3.12/site-packages/torch/_functorch/_aot_autograd/graph_compile.py", line 426, in _aot_stage2b_inference_compile
+    return _aot_stage2b_compile_forward_or_inference(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/dgemma/venv/lib/python3.12/site-packages/torch/_functorch/_aot_autograd/graph_compile.py", line 2900, in _aot_stage2b_compile_forward_or_inference
+    compiled_fw_func = compiler(fw_module, adjusted_flat_args)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/dgemma/venv/lib/python3.12/site-packages/torch/_functorch/_aot_autograd/schemas.py", line 1504, in __call__
+    output_code = self.compiler_fn(gm, example_inputs)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/dgemma/venv/lib/python3.12/site-packages/torch_tpu/_internal/compile/_backend.py", line 922, in _compile_graph_module
+    executable = compiler_instance(
+                 ^^^^^^^^^^^^^^^^^^
+  File "/opt/dgemma/venv/lib/python3.12/site-packages/torch_tpu/_internal/compile/split_compiler.py", line 803, in __call__
+    executable = self._compile_graph(
+                 ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/dgemma/venv/lib/python3.12/site-packages/torch_tpu/_internal/compile/split_compiler.py", line 738, in _compile_graph
+    submod_compiler.run(*example_inputs)
+  File "/opt/dgemma/venv/lib/python3.12/site-packages/torch/fx/interpreter.py", line 197, in run
+    self.env[node] = self.run_node(node)
+                     ^^^^^^^^^^^^^^^^^^^
+  File "/opt/dgemma/venv/lib/python3.12/site-packages/torch_tpu/_internal/compile/split_compiler.py", line 412, in run_node
+    compiled_submod_real = self.compile_submod(
+                           ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/dgemma/venv/lib/python3.12/site-packages/torch_tpu/_internal/compile/split_compiler.py", line 375, in compile_submod
+    compiled_submod_real = self.compiler_fn(
+                           ^^^^^^^^^^^^^^^^^
+  File "/opt/dgemma/venv/lib/python3.12/site-packages/torch_tpu/_internal/compile/compiler.py", line 568, in __call__
+    return self._compile(
+           ^^^^^^^^^^^^^^
+  File "/opt/dgemma/venv/lib/python3.12/site-packages/torch_tpu/_internal/compile/compiler.py", line 407, in _compile
+    exported_mlir = torch_tpu_export.fx_to_mlir(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/dgemma/venv/lib/python3.12/site-packages/torch_tpu/_internal/export/export.py", line 589, in fx_to_mlir
+    compile_result = tpu_torch_compile.traverse_and_compile(
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+torch._dynamo.exc.BackendCompilerFailed: backend='tpu' raised:
+RuntimeError: failed to compile MLIR module -- the XLA compiler failed with: e1000: CompileTimeHbmOom: Ran out of memory on HBM, the total memory required for HLO temporaries (31.76G) exceeds available HBM (31.24G). HLO module: tt_jit_generate_L301C0__prefill_impl_to_copy_copy_.
+See https://openxla.org/xla/errors/error_1000 for more details
+
+While executing %submod_0 : [num_users=17] = call_module[target=submod_0](args = (%arg1_1, %arg0_1, %arg2_1, %arg5_1, %arg6_1, %arg7_1, %arg8_1, %arg9_1, %arg10_1, %arg11_1, %arg12_1, %arg13_1, %arg14_1, %arg15_1, %arg16_1, %arg17_1, %arg18_1, %arg19_1, %arg20_1, %arg21_1, %arg22_1, %arg23_1, %arg24_1, %arg25_1, %arg26_1, %arg27_1, %arg28_1, %arg29_1, %arg30_1, %arg31_1, %arg32_1, %arg33_1, %arg34_1, %arg35_1, %arg36_1, %arg37_1, %arg38_1, %arg39_1, %arg40_1, %arg41_1, %arg42_1, %arg43_1, %arg44_1, %arg45_1, %arg46_1, %arg47_1, %arg48_1, %arg49_1, %arg50_1, %arg51_1, %arg52_1, %arg53_1, %arg54_1, %arg55_1, %arg56_1, %arg57_1, %arg58_1, %arg59_1, %arg60_1, %arg61_1, %arg62_1, %arg63_1, %arg64_1, %arg65_1, %arg66_1, %arg67_1, %arg68_1, %arg69_1, %arg70_1, %arg71_1, %arg72_1, %arg73_1, %arg74_1, %arg75_1, %arg76_1, %arg77_1, %arg78_1, %arg79_1, %arg80_1, %arg81_1, %arg82_1, %arg83_1, %arg84_1, %arg85_1, %arg86_1, %arg87_1, %arg88_1, %arg89_1, %arg90_1, %arg91_1, %arg92_1, %arg93_1, %arg94_1, %arg95_1, %arg96_1, %arg97_1, %arg98_1, %arg99_1, %arg100_1, %arg101_1, %arg102_1, %arg103_1, %arg104_1, %arg105_1, %arg106_1, %arg107_1, %arg108_1, %arg109_1, %arg110_1, %arg111_1, %arg112_1, %arg113_1, %arg114_1, %arg115_1, %arg116_1, %arg117_1, %arg118_1, %arg119_1, %arg120_1, %arg121_1, %arg122_1, %arg123_1, %arg124_1, %arg125_1, %arg126_1, %arg127_1, %arg128_1, %arg129_1, %arg130_1, %arg133_1, %arg134_1, %arg3_1, %arg135_1, %arg136_1, %arg4_1), kwargs = {})
+Original traceback:
+None
+Use tlparse to see full graph. (https://github.com/pytorch/tlparse?tab=readme-ov-file#tlparse-parse-structured-pt2-logs)
+
+Set TORCHDYNAMO_VERBOSE=1 for the full Dynamo stack trace (please do this especially if you're reporting a bug to PyTorch). For even more developer context, set TORCH_LOGS="+dynamo"
+
+I0000 00:00:1794298927.069621   24525 compilation_cache.cc:356] Compilation cache evicted.
+I0000 00:00:1794298927.069681   24525 compilation_cache.cc:203] CompilationCache final stats: num_cache_reqs=25
+num_cache_hits=12 {48.0%}
+num_compilations=1
+peak_compilation_memory_bytes=unknown
+

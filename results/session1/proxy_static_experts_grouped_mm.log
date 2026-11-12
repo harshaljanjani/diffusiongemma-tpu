@@ -1,0 +1,29 @@
+/opt/dgemma/venv/lib/python3.12/site-packages/torch_tpu/__init__.py:37: UserWarning: <TorchTpu/Performance/TcMalloc/> tcmalloc is not loaded; TorchTPU host performance may be degraded due to glibc ptmalloc contention. Preload libtcmalloc before starting Python (e.g. LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libtcmalloc_minimal.so.4), or set PYTHONWARNINGS="ignore:<TorchTpu/Performance/TcMalloc/" to suppress this warning.
+  _tcmalloc_check.check_tcmalloc()
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1794298930.884923   24973 pjrt_api.cc:119] GetPjrtApi was found for TPU at /opt/dgemma/venv/lib/python3.12/site-packages/libtpu/libtpu.so
+I0000 00:00:1794298931.961548   24973 device_rt.cc:166] PjRt runtime initialization deferred for tpu
+Successfully renamed PrivateUse1 backend to 'tpu'. Device: device(type='tpu')
+Registered Python module for 'tpu'.
+Device type: tpu, Device index: default
+Initializing TPU distributed runtime
+I0000 00:00:1794298931.964225   24973 libtpu_version.cc:63] Setting libtpu version to: 0.0.52
+I0000 00:00:1794298933.043902   24973 pjrt_api.cc:168] The PJRT plugin has PJRT API version 0.117. The framework PJRT API version is 0.116.
+I0000 00:00:1794298934.277721   24973 pjrt_c_api_client.cc:187] PjRtCApiClient created.
+I0000 00:00:1794298945.920955   25190 compilation_cache_utils.cc:218] Tier-3 compilation cache root directory: /opt/tpu-compile-cache
+I0000 00:00:1794298945.920990   25190 tier2_compilation_cache.cc:72] Tier-2 compilation cache is enabled with name 'default' because tier-3 is enabled.
+I0000 00:00:1794298945.920995   25190 tier3_compilation_cache.cc:57] Backup compilation for tier-3 cache read is enabled by default.
+I0000 00:00:1794298945.922916   25301 compilation_cache_utils.cc:99] Tier-2 cache uses TorchTPU binary fingerprint: db58e6e353078fff
+  based on TorchTPU binary version 5 and PjRt version:
+TFRT TPU v6 lite
+Built on Nov 5 2026 01:07:28 (1793869648) cl/1014260217
+C API version: 0.117
+[W1110 08:22:25.251075155 env_vars.h:405] Warning: <TorchTpu/ApiStage/ExperimentalApi/> the TORCH_TPU_TIER3_COMPILATION_CACHE_ROOT environment variable is an experimental feature and may change or be removed without notice. (function operator())
+I0000 00:00:1794298949.978897   25300 tier3_compilation_cache.cc:84] Tier-3 compilation cache path for this process: /opt/tpu-compile-cache/db58e6e353078fff
+{"benchmark": "diffusion", "args": {"model": "proxy:6", "device": "auto", "dtype": "bfloat16", "sampler": "static", "compile": "auto", "cache": "static", "batch_size": 1, "prompt_length": 200, "prompt_bucket": 128, "max_new_tokens": 512, "max_denoising_steps": null, "stop_check_interval": 4, "attn_implementation": null, "experts_implementation": "grouped_mm", "warmup_runs": 2, "timed_runs": 2, "label": "proxy_static_experts_grouped_mm", "output": "/opt/dgemma/repo/results/session1/diffusion.jsonl"}, "environment": {"torch": "2.15.0+cpu", "transformers": "5.22.2", "python": "3.12.16", "device": "tpu", "timestamp": "2026-11-10T08:23:24Z", "torch_tpu": "unknown", "device_count": 1}, "load_seconds": 11.62082938200001, "warmup_seconds": [50.805340859000125, 2.5394834329999867], "median_tokens_per_second": 0.0, "median_canvas_tokens_per_second": 203.6088988896414, "median_total_seconds": 2.533608445500022, "peak_memory_bytes": 26437499392, "runs": [{"num_denoising_steps": 96, "num_canvases": 2, "num_stop_checks": 22, "decoder_forward_passes": [96], "tokens_per_forward": [0.0], "prefill_seconds": 0.01897802899998169, "canvas_seconds": [1.2643938350001918, 1.247141604000035], "total_seconds": 2.5334808249999696, "generated_tokens": 0, "canvas_tokens": 512, "tokens_per_second": 0.0, "canvas_tokens_per_second": 203.61878332944295, "seconds_per_step": 0.02619273745833321}, {"num_denoising_steps": 96, "num_canvases": 2, "num_stop_checks": 22, "decoder_forward_passes": [96], "tokens_per_forward": [0.0], "prefill_seconds": 0.018989118999797938, "canvas_seconds": [1.265593613999954, 1.246024443999886], "total_seconds": 2.533736066000074, "generated_tokens": 0, "canvas_tokens": 512, "tokens_per_second": 0.0, "canvas_tokens_per_second": 203.5990144498399, "seconds_per_step": 0.026195280697919543}]}
+I0000 00:00:1794299005.336685   24973 compilation_cache.cc:356] Compilation cache evicted.
+I0000 00:00:1794299005.336774   24973 compilation_cache.cc:203] CompilationCache final stats: num_cache_reqs=190
+num_cache_hits=161 {84.7%}
+num_compilations=3
+peak_compilation_memory_bytes=unknown
+

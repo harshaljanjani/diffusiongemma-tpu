@@ -1,0 +1,30 @@
+/opt/dgemma/venv/lib/python3.12/site-packages/torch_tpu/__init__.py:37: UserWarning: <TorchTpu/Performance/TcMalloc/> tcmalloc is not loaded; TorchTPU host performance may be degraded due to glibc ptmalloc contention. Preload libtcmalloc before starting Python (e.g. LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libtcmalloc_minimal.so.4), or set PYTHONWARNINGS="ignore:<TorchTpu/Performance/TcMalloc/" to suppress this warning.
+  _tcmalloc_check.check_tcmalloc()
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1794298109.764110   13766 pjrt_api.cc:119] GetPjrtApi was found for TPU at /opt/dgemma/venv/lib/python3.12/site-packages/libtpu/libtpu.so
+I0000 00:00:1794298110.851360   13766 device_rt.cc:166] PjRt runtime initialization deferred for tpu
+Successfully renamed PrivateUse1 backend to 'tpu'. Device: device(type='tpu')
+Registered Python module for 'tpu'.
+Device type: tpu, Device index: default
+Initializing TPU distributed runtime
+I0000 00:00:1794298110.854034   13766 libtpu_version.cc:63] Setting libtpu version to: 0.0.52
+I0000 00:00:1794298111.941541   13766 pjrt_api.cc:168] The PJRT plugin has PJRT API version 0.117. The framework PJRT API version is 0.116.
+I0000 00:00:1794298113.171606   13766 pjrt_c_api_client.cc:187] PjRtCApiClient created.
+Loading weights:   0%|          | 0/82 [00:00<?, ?it/s]Loading weights: 100%|██████████| 82/82 [00:00<00:00, 9270.68it/s]
+I0000 00:00:1794298113.645406   13983 compilation_cache_utils.cc:218] Tier-3 compilation cache root directory: /opt/tpu-compile-cache
+I0000 00:00:1794298113.645471   13983 tier2_compilation_cache.cc:72] Tier-2 compilation cache is enabled with name 'default' because tier-3 is enabled.
+I0000 00:00:1794298113.645477   13983 tier3_compilation_cache.cc:57] Backup compilation for tier-3 cache read is enabled by default.
+I0000 00:00:1794298113.647328   14077 compilation_cache_utils.cc:99] Tier-2 cache uses TorchTPU binary fingerprint: db58e6e353078fff
+  based on TorchTPU binary version 5 and PjRt version:
+TFRT TPU v6 lite
+Built on Nov 5 2026 01:07:28 (1793869648) cl/1014260217
+C API version: 0.117
+[W1110 08:08:33.960995973 env_vars.h:405] Warning: <TorchTpu/ApiStage/ExperimentalApi/> the TORCH_TPU_TIER3_COMPILATION_CACHE_ROOT environment variable is an experimental feature and may change or be removed without notice. (function operator())
+I0000 00:00:1794298115.598947   14076 tier3_compilation_cache.cc:84] Tier-3 compilation cache path for this process: /opt/tpu-compile-cache/db58e6e353078fff
+{"benchmark": "diffusion", "args": {"model": "tiny", "device": "auto", "dtype": "bfloat16", "sampler": "static", "compile": "auto", "cache": "static", "batch_size": 1, "prompt_length": 40, "prompt_bucket": 128, "max_new_tokens": 512, "max_denoising_steps": null, "stop_check_interval": 4, "attn_implementation": null, "experts_implementation": null, "warmup_runs": 2, "timed_runs": 3, "label": "tiny_static_compiled", "output": "/opt/dgemma/repo/results/session1/diffusion.jsonl"}, "environment": {"torch": "2.15.0+cpu", "transformers": "5.22.2", "python": "3.12.16", "device": "tpu", "timestamp": "2026-11-10T08:08:50Z", "torch_tpu": "unknown", "device_count": 1}, "load_seconds": 0.4538386520000586, "warmup_seconds": [15.140303474999996, 0.37862835600003564], "median_tokens_per_second": 1376.538651618784, "median_canvas_tokens_per_second": 1376.538651618784, "median_total_seconds": 0.3730540400000564, "peak_memory_bytes": 38296064, "runs": [{"num_denoising_steps": 768, "num_canvases": 16, "num_stop_checks": 176, "decoder_forward_passes": [768], "tokens_per_forward": [0.6666666865348816], "prefill_seconds": 0.001065829000026497, "canvas_seconds": [0.02291015699995569, 0.02293960600002265, 0.02296833700006573, 0.02303925600006096, 0.02284177699993961, 0.023005415999932666, 0.022990705999973216, 0.023013096999989102, 0.02332197599992014, 0.022797245999981897, 0.022911876999955894, 0.0227832870000384, 0.02293651599995883, 0.022903426000084437, 0.02294057699998575, 0.022110247000000527], "total_seconds": 0.3698061620000317, "generated_tokens": 512, "canvas_tokens": 512, "tokens_per_second": 1388.5109769101196, "canvas_tokens_per_second": 1388.5109769101196, "seconds_per_step": 0.0004801306419270901}, {"num_denoising_steps": 768, "num_canvases": 16, "num_stop_checks": 176, "decoder_forward_passes": [768], "tokens_per_forward": [0.6666666865348816], "prefill_seconds": 0.0011066199999731907, "canvas_seconds": [0.023053096000012374, 0.02296530699993582, 0.02302981599996201, 0.02297131700004229, 0.02289572600000156, 0.023080356000036772, 0.022877027000049566, 0.022980576000009023, 0.022916886999951203, 0.023200636000069608, 0.022927996000021267, 0.022903657000028943, 0.023117756000033296, 0.023868035999953463, 0.023940756000001784, 0.02290286599998126], "total_seconds": 0.3730540400000564, "generated_tokens": 512, "canvas_tokens": 512, "tokens_per_second": 1376.538651618784, "canvas_tokens_per_second": 1376.538651618784, "seconds_per_step": 0.00048430653645844163}, {"num_denoising_steps": 768, "num_canvases": 16, "num_stop_checks": 176, "decoder_forward_passes": [768], "tokens_per_forward": [0.6666666865348816], "prefill_seconds": 0.0011567089999289237, "canvas_seconds": [0.02405308600009448, 0.02390742600005069, 0.023857335999991847, 0.024028075999922294, 0.023905665999905068, 0.023969925000074, 0.02391121599998769, 0.024008915999957026, 0.023949175999973704, 0.024691534999988107, 0.024039775999995072, 0.02363242599994919, 0.02367000599997482, 0.023711346000027334, 0.023780896000062057, 0.022726896999984092], "total_seconds": 0.38534827299997687, "generated_tokens": 512, "canvas_tokens": 512, "tokens_per_second": 1332.6685122111012, "canvas_tokens_per_second": 1332.6685122111012, "seconds_per_step": 0.0005002494322917291}]}
+I0000 00:00:1794298131.297730   13766 compilation_cache.cc:356] Compilation cache evicted.
+I0000 00:00:1794298131.297804   13766 compilation_cache.cc:203] CompilationCache final stats: num_cache_reqs=1272
+num_cache_hits=1244 {97.7%}
+num_compilations=4
+peak_compilation_memory_bytes=unknown
+

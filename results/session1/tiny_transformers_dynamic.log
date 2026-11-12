@@ -1,0 +1,30 @@
+/opt/dgemma/venv/lib/python3.12/site-packages/torch_tpu/__init__.py:37: UserWarning: <TorchTpu/Performance/TcMalloc/> tcmalloc is not loaded; TorchTPU host performance may be degraded due to glibc ptmalloc contention. Preload libtcmalloc before starting Python (e.g. LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libtcmalloc_minimal.so.4), or set PYTHONWARNINGS="ignore:<TorchTpu/Performance/TcMalloc/" to suppress this warning.
+  _tcmalloc_check.check_tcmalloc()
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1794298193.910560   15003 pjrt_api.cc:119] GetPjrtApi was found for TPU at /opt/dgemma/venv/lib/python3.12/site-packages/libtpu/libtpu.so
+I0000 00:00:1794298194.995796   15003 device_rt.cc:166] PjRt runtime initialization deferred for tpu
+Successfully renamed PrivateUse1 backend to 'tpu'. Device: device(type='tpu')
+Registered Python module for 'tpu'.
+Device type: tpu, Device index: default
+Initializing TPU distributed runtime
+I0000 00:00:1794298194.998468   15003 libtpu_version.cc:63] Setting libtpu version to: 0.0.52
+I0000 00:00:1794298196.085840   15003 pjrt_api.cc:168] The PJRT plugin has PJRT API version 0.117. The framework PJRT API version is 0.116.
+I0000 00:00:1794298197.211879   15003 pjrt_c_api_client.cc:187] PjRtCApiClient created.
+Loading weights:   0%|          | 0/82 [00:00<?, ?it/s]Loading weights: 100%|██████████| 82/82 [00:00<00:00, 9467.95it/s]
+I0000 00:00:1794298197.667571   15221 compilation_cache_utils.cc:218] Tier-3 compilation cache root directory: /opt/tpu-compile-cache
+I0000 00:00:1794298197.667628   15221 tier2_compilation_cache.cc:72] Tier-2 compilation cache is enabled with name 'default' because tier-3 is enabled.
+I0000 00:00:1794298197.667634   15221 tier3_compilation_cache.cc:57] Backup compilation for tier-3 cache read is enabled by default.
+I0000 00:00:1794298197.669560   15314 compilation_cache_utils.cc:99] Tier-2 cache uses TorchTPU binary fingerprint: db58e6e353078fff
+  based on TorchTPU binary version 5 and PjRt version:
+TFRT TPU v6 lite
+Built on Nov 5 2026 01:07:28 (1793869648) cl/1014260217
+C API version: 0.117
+/opt/dgemma/venv/lib/python3.12/site-packages/transformers/models/diffusion_gemma/generation_diffusion_gemma.py:658: UserWarning: <TorchTpu/ApiStage/ExperimentalApi/> the TORCH_TPU_TIER3_COMPILATION_CACHE_ROOT environment variable is an experimental feature and may change or be removed without notice. (Triggered internally at ./csrc/common/env_vars.h:405.)
+  and (input_ids == self.config.image_token_id).any()
+{"benchmark": "diffusion", "args": {"model": "tiny", "device": "auto", "dtype": "bfloat16", "sampler": "transformers", "compile": "none", "cache": "dynamic", "batch_size": 1, "prompt_length": 40, "prompt_bucket": 128, "max_new_tokens": 512, "max_denoising_steps": null, "stop_check_interval": 4, "attn_implementation": null, "experts_implementation": null, "warmup_runs": 1, "timed_runs": 1, "label": "tiny_transformers_dynamic", "output": "/opt/dgemma/repo/results/session1/diffusion.jsonl"}, "environment": {"torch": "2.15.0+cpu", "transformers": "5.22.2", "python": "3.12.16", "device": "tpu", "timestamp": "2026-11-10T08:10:46Z", "torch_tpu": "unknown", "device_count": 1}, "load_seconds": 0.4410757590000003, "warmup_seconds": [26.008565915000077], "median_tokens_per_second": 21.98906208143158, "median_canvas_tokens_per_second": 21.98906208143158, "median_total_seconds": 23.284303719000036, "peak_memory_bytes": 446636032, "runs": [{"tokens_per_forward": [0.6666666865348816], "total_seconds": 23.284303719000036, "generated_tokens": 512, "canvas_tokens": 512, "tokens_per_second": 21.98906208143158, "canvas_tokens_per_second": 21.98906208143158}]}
+I0000 00:00:1794298248.077548   15003 compilation_cache.cc:356] Compilation cache evicted.
+I0000 00:00:1794298248.077733   15003 compilation_cache.cc:203] CompilationCache final stats: num_cache_reqs=696788
+num_cache_hits=696109 {99.9%}
+num_compilations=0
+peak_compilation_memory_bytes=unknown
+
