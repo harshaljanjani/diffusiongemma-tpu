@@ -40,7 +40,7 @@ case "$ACTION" in
     git -C "$REPO_DIR" archive --format=tar.gz -o "$(native_path "$ARCHIVE")" HEAD
     scp "${SSH_OPTIONS[@]}" "$ARCHIVE" "$SSH_USER@$(address):/tmp/dgemma.tar.gz"
     ssh "${SSH_OPTIONS[@]}" "$SSH_USER@$(address)" \
-      "mkdir -p /opt/dgemma/repo && tar -xzf /tmp/dgemma.tar.gz -C /opt/dgemma/repo"
+      "sudo mkdir -p /opt/dgemma/repo && sudo tar -xzf /tmp/dgemma.tar.gz -C /opt/dgemma/repo"
     rm -f "$ARCHIVE"
     ;;
   run)

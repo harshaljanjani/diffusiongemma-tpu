@@ -11,7 +11,8 @@ from transformers import (
     Gemma4ForConditionalGeneration,
 )
 from transformers.distributed.configuration_utils import DistributedConfig
-from transformers.initialization import no_init_weights
+
+from dgemma_tpu.moe import register_experts_implementations
 
 DIFFUSION_MODEL_ID = "google/diffusiongemma-26B-A4B-it"
 GEMMA4_MODEL_ID = "google/gemma-4-26B-A4B-it"
@@ -53,6 +54,7 @@ def load_model(
     """
     model_class = DiffusionGemmaForBlockDiffusion if family == "diffusion" else Gemma4ForConditionalGeneration
     released_model_id = DIFFUSION_MODEL_ID if family == "diffusion" else GEMMA4_MODEL_ID
+    register_experts_implementations()
     overrides = {}
     if attn_implementation is not None:
         overrides["attn_implementation"] = attn_implementation
@@ -63,8 +65,7 @@ def load_model(
         config = proxy_config(released_model_id, int(spec.split(":", 1)[1]))
         for name, value in overrides.items():
             setattr(config, f"_{name}", value)
-        with no_init_weights():
-            model = model_class(config)
+        model = model_class(config)
         return model.to(dtype).to(device).eval()
 
     model_id = TINY_MODEL_ID if spec == "tiny" else spec
