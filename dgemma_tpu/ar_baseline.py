@@ -63,6 +63,8 @@ class StaticAutoregressiveGenerator:
             Backend passed to `torch.compile`. Runs eagerly when unset.
         compile_options (`dict`, *optional*):
             Extra keyword arguments for `torch.compile`.
+        function_decorator (`Callable`, *optional*):
+            Decorator applied to each stage before compilation, such as `torch.tpu.distributed.spmd_safe`.
         noise (`DeviceNoise`, *optional*):
             Source of sampling noise.
     """
@@ -78,6 +80,7 @@ class StaticAutoregressiveGenerator:
         top_k: int = 64,
         compile_backend=None,
         compile_options: dict | None = None,
+        function_decorator=None,
         noise: DeviceNoise | None = None,
     ):
         self.model = model
@@ -107,8 +110,9 @@ class StaticAutoregressiveGenerator:
         self._decode_step = self._decode_step_impl
         if compile_backend is not None:
             options = {"fullgraph": True, "dynamic": False, **(compile_options or {})}
-            self._prefill = torch.compile(self._prefill_impl, backend=compile_backend, **options)
-            self._decode_step = torch.compile(self._decode_step_impl, backend=compile_backend, **options)
+            decorate = function_decorator if function_decorator is not None else lambda function: function
+            self._prefill = torch.compile(decorate(self._prefill_impl), backend=compile_backend, **options)
+            self._decode_step = torch.compile(decorate(self._decode_step_impl), backend=compile_backend, **options)
 
     @torch.no_grad()
     def generate(
