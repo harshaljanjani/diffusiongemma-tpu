@@ -6,6 +6,7 @@ import torch
 from common import DTYPES, environment_info, load_model, random_prompts, write_result
 
 from dgemma_tpu.ar_baseline import StaticAutoregressiveGenerator
+from dgemma_tpu.dist import spmd_decorator
 from dgemma_tpu.runtime import compile_backend_for, peak_memory_bytes, resolve_device, synchronize, timed
 
 
@@ -24,6 +25,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--do-sample", action="store_true")
     parser.add_argument("--attn-implementation", default=None)
     parser.add_argument("--experts-implementation", default=None)
+    parser.add_argument("--expert-parallel", action="store_true")
     parser.add_argument("--warmup-runs", type=int, default=2)
     parser.add_argument("--timed-runs", type=int, default=3)
     parser.add_argument("--label", default="")
@@ -39,6 +41,7 @@ def run_static(args, model, device, input_ids):
         stop_check_interval=args.stop_check_interval,
         do_sample=args.do_sample,
         compile_backend=compile_backend_for(device, args.compile),
+        function_decorator=spmd_decorator(device.type) if args.expert_parallel else None,
     )
 
     def generate():
@@ -75,7 +78,13 @@ def main() -> None:
     timings = {}
     with timed(device, timings, "load_seconds"):
         model = load_model(
-            "gemma4", args.model, device, DTYPES[args.dtype], args.attn_implementation, args.experts_implementation
+            "gemma4",
+            args.model,
+            device,
+            DTYPES[args.dtype],
+            args.attn_implementation,
+            args.experts_implementation,
+            args.expert_parallel,
         )
     input_ids = random_prompts(args.batch_size, args.prompt_length, model.config.text_config.vocab_size, device)
     build = run_static if args.sampler == "static" else run_transformers

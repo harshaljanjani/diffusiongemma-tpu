@@ -53,7 +53,7 @@ def main() -> None:
     parser.add_argument("--max-new-tokens", type=int, default=512)
     parser.add_argument("--prompt-bucket", type=int, default=256)
     parser.add_argument("--stop-check-interval", type=int, default=4)
-    parser.add_argument("--tensor-parallel", action="store_true")
+    parser.add_argument("--expert-parallel", action="store_true")
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--output", default=None)
     args = parser.parse_args()
@@ -63,7 +63,7 @@ def main() -> None:
     processor = AutoProcessor.from_pretrained(model_id)
     tokenizer = processor.tokenizer
     tokenizer.padding_side = "left"
-    model = load_model(args.family, model_id, device, DTYPES[args.dtype], tensor_parallel=args.tensor_parallel)
+    model = load_model(args.family, model_id, device, DTYPES[args.dtype], expert_parallel=args.expert_parallel)
 
     backend = compile_backend_for(device, args.compile)
     if args.family == "diffusion":

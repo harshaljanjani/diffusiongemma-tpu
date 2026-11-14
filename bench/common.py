@@ -10,9 +10,10 @@ from transformers import (
     DiffusionGemmaForBlockDiffusion,
     Gemma4ForConditionalGeneration,
 )
-from transformers.distributed.configuration_utils import DistributedConfig
 
+from dgemma_tpu.dist import initialize_process_group, shard_experts
 from dgemma_tpu.moe import register_experts_implementations
+from dgemma_tpu.runtime import move_preserving_ties
 
 DIFFUSION_MODEL_ID = "google/diffusiongemma-26B-A4B-it"
 GEMMA4_MODEL_ID = "google/gemma-4-26B-A4B-it"
@@ -27,7 +28,7 @@ def load_model(
     dtype: torch.dtype,
     attn_implementation: str | None = None,
     experts_implementation: str | None = None,
-    tensor_parallel: bool = False,
+    expert_parallel: bool = False,
 ):
     """
     Loads a DiffusionGemma or Gemma 4 model for benchmarking.
@@ -46,8 +47,8 @@ def load_model(
             Attention implementation override.
         experts_implementation (`str`, *optional*):
             Mixture-of-experts implementation override.
-        tensor_parallel (`bool`, *optional*, defaults to `False`):
-            Whether to shard pretrained weights across the chips of a `torchrun` launch with the model's plan.
+        expert_parallel (`bool`, *optional*, defaults to `False`):
+            Whether to slice the experts across the ranks of a `torchrun` launch and all-reduce their outputs.
 
     Returns:
         `PreTrainedModel`: The model in evaluation mode.
@@ -65,16 +66,33 @@ def load_model(
         config = proxy_config(released_model_id, int(spec.split(":", 1)[1]))
         for name, value in overrides.items():
             setattr(config, f"_{name}", value)
-        model = model_class(config)
-        return model.to(dtype).to(device).eval()
+        model = model_class(config).to(dtype)
+        return place_model(model, device, expert_parallel)
 
     model_id = TINY_MODEL_ID if spec == "tiny" else spec
-    if tensor_parallel:
-        distributed_config = DistributedConfig(tp_plan="auto")
-        model = model_class.from_pretrained(model_id, dtype=dtype, distributed_config=distributed_config, **overrides)
-        return model.eval()
     model = model_class.from_pretrained(model_id, dtype=dtype, **overrides)
-    return model.to(device).eval()
+    return place_model(model, device, expert_parallel)
+
+
+def place_model(model, device: torch.device, expert_parallel: bool):
+    """
+    Shards the experts when requested and moves the model to its device without duplicating tied weights.
+
+    Args:
+        model (`PreTrainedModel`):
+            Model with its weights on the host.
+        device (`torch.device`):
+            Target device.
+        expert_parallel (`bool`):
+            Whether to slice the experts across the ranks of the launch.
+
+    Returns:
+        `PreTrainedModel`: The model in evaluation mode on `device`.
+    """
+    if expert_parallel:
+        rank, world_size = initialize_process_group(device.type)
+        shard_experts(model, rank, world_size)
+    return move_preserving_ties(model, device).eval()
 
 
 def proxy_config(released_model_id: str, num_layers: int):
