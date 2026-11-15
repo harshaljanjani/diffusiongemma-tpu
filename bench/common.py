@@ -1,4 +1,5 @@
 import json
+import os
 import platform
 import time
 from pathlib import Path
@@ -7,6 +8,7 @@ import torch
 import transformers
 from transformers import (
     AutoConfig,
+    AutoTokenizer,
     DiffusionGemmaForBlockDiffusion,
     Gemma4ForConditionalGeneration,
 )
@@ -118,6 +120,54 @@ def proxy_config(released_model_id: str, num_layers: int):
     return config
 
 
+BENCHMARK_PROMPTS = [
+    "Explain how a hash map handles collisions and what that means for its worst-case lookup time.",
+    "Write a short story about a lighthouse keeper who discovers a message in a bottle.",
+    "Give a step-by-step plan for learning linear algebra in three months, with one resource per step.",
+    "Write a Python function that merges overlapping intervals, then explain its time complexity.",
+    "Summarize the causes and consequences of the Industrial Revolution for a high-school student.",
+    "Compare electric and hydrogen fuel-cell cars in terms of efficiency, infrastructure and cost.",
+    "Describe how vaccines train the immune system, and why some need booster doses.",
+    "Draft a polite email asking a landlord to repair a broken heater before winter.",
+]
+
+
+def benchmark_prompts(args, family: str, model, device: torch.device):
+    """
+    Builds the prompts of a benchmark run.
+
+    Args:
+        args (`argparse.Namespace`):
+            Parsed arguments providing `prompts`, `batch_size` and `prompt_length`.
+        family (`str`):
+            `"diffusion"` or `"gemma4"`, which selects the tokenizer for chat prompts.
+        model (`PreTrainedModel`):
+            Model the prompts are for.
+        device (`torch.device`):
+            Target device.
+
+    Returns:
+        `tuple[torch.Tensor, torch.Tensor | None]`: Token ids and the attention mask, which is `None` for random
+        prompts.
+    """
+    if args.prompts == "random":
+        vocab_size = model.config.text_config.vocab_size
+        return random_prompts(args.batch_size, args.prompt_length, vocab_size, device), None
+    tokenizer = AutoTokenizer.from_pretrained(DIFFUSION_MODEL_ID if family == "diffusion" else GEMMA4_MODEL_ID)
+    tokenizer.padding_side = "left"
+    texts = [
+        tokenizer.apply_chat_template(
+            [{"role": "user", "content": BENCHMARK_PROMPTS[index % len(BENCHMARK_PROMPTS)]}],
+            tokenize=False,
+            add_generation_prompt=True,
+            enable_thinking=False,
+        )
+        for index in range(args.batch_size)
+    ]
+    encoded = tokenizer(texts, return_tensors="pt", padding=True, add_special_tokens=False)
+    return encoded["input_ids"].to(device), encoded["attention_mask"].to(device)
+
+
 def random_prompts(batch_size: int, prompt_length: int, vocab_size: int, device: torch.device, seed: int = 0):
     """
     Draws random prompt token ids on the host and moves them to the device.
@@ -185,7 +235,7 @@ def write_result(path: str | None, record: dict) -> None:
     """
     line = json.dumps(record)
     print(line, flush=True)
-    if path is not None:
+    if path is not None and os.environ.get("RANK", "0") == "0":
         output_path = Path(path)
         output_path.parent.mkdir(parents=True, exist_ok=True)
         with output_path.open("a") as output_file:

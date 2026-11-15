@@ -4,7 +4,7 @@ import re
 import torch
 from common import DIFFUSION_MODEL_ID, DTYPES, GEMMA4_MODEL_ID, environment_info, load_model, write_result
 from datasets import load_dataset
-from transformers import AutoProcessor
+from transformers import AutoTokenizer
 
 from dgemma_tpu import StaticBlockDiffusionGenerator
 from dgemma_tpu.ar_baseline import StaticAutoregressiveGenerator
@@ -60,8 +60,7 @@ def main() -> None:
 
     device = resolve_device(args.device)
     model_id = args.model or (DIFFUSION_MODEL_ID if args.family == "diffusion" else GEMMA4_MODEL_ID)
-    processor = AutoProcessor.from_pretrained(model_id)
-    tokenizer = processor.tokenizer
+    tokenizer = AutoTokenizer.from_pretrained(model_id)
     tokenizer.padding_side = "left"
     model = load_model(args.family, model_id, device, DTYPES[args.dtype], expert_parallel=args.expert_parallel)
 

@@ -3,7 +3,7 @@ import statistics
 import time
 
 import torch
-from common import DTYPES, environment_info, load_model, random_prompts, write_result
+from common import DTYPES, benchmark_prompts, environment_info, load_model, write_result
 
 from dgemma_tpu import StaticBlockDiffusionGenerator
 from dgemma_tpu.dist import spmd_decorator
@@ -19,6 +19,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--compile", default="auto", help="none, auto, or a torch.compile backend name")
     parser.add_argument("--cache", default="static", choices=["static", "dynamic"], help="transformers sampler only")
     parser.add_argument("--batch-size", type=int, default=1)
+    parser.add_argument("--prompts", default="random", choices=["random", "chat"])
     parser.add_argument("--prompt-length", type=int, default=64)
     parser.add_argument("--prompt-bucket", type=int, default=128)
     parser.add_argument("--max-new-tokens", type=int, default=256)
@@ -34,7 +35,7 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def run_static(args, model, device, input_ids, generation_kwargs):
+def run_static(args, model, device, input_ids, attention_mask, generation_kwargs):
     generator = StaticBlockDiffusionGenerator(
         model,
         max_new_tokens=args.max_new_tokens,
@@ -46,7 +47,7 @@ def run_static(args, model, device, input_ids, generation_kwargs):
     )
 
     def generate():
-        output = generator.generate(input_ids, profile=True)
+        output = generator.generate(input_ids, attention_mask, profile=True)
         return {
             "sequences": output.sequences,
             "num_denoising_steps": output.num_denoising_steps,
@@ -61,8 +62,10 @@ def run_static(args, model, device, input_ids, generation_kwargs):
     return generate
 
 
-def run_transformers(args, model, device, input_ids, generation_kwargs):
+def run_transformers(args, model, device, input_ids, attention_mask, generation_kwargs):
     kwargs = dict(generation_kwargs, max_new_tokens=args.max_new_tokens)
+    if attention_mask is not None:
+        kwargs["attention_mask"] = attention_mask
     if args.cache == "static":
         kwargs["cache_implementation"] = "static"
     if args.compile == "none":
@@ -89,7 +92,8 @@ def main() -> None:
             args.experts_implementation,
             args.expert_parallel,
         )
-    input_ids = random_prompts(args.batch_size, args.prompt_length, model.config.text_config.vocab_size, device)
+    input_ids, attention_mask = benchmark_prompts(args, "diffusion", model, device)
+    prompt_length = input_ids.shape[1]
     generation_kwargs = {}
     if args.max_denoising_steps is not None:
         generation_kwargs["max_denoising_steps"] = args.max_denoising_steps
@@ -97,7 +101,7 @@ def main() -> None:
         generation_kwargs["pad_token_id"] = 0
 
     build = run_static if args.sampler == "static" else run_transformers
-    generate = build(args, model, device, input_ids, generation_kwargs)
+    generate = build(args, model, device, input_ids, attention_mask, generation_kwargs)
 
     warmup_seconds = []
     for _ in range(args.warmup_runs):
@@ -115,7 +119,7 @@ def main() -> None:
         synchronize(device)
         elapsed = time.perf_counter() - start
         sequences = result.pop("sequences")
-        new_tokens = sequences[:, args.prompt_length :]
+        new_tokens = sequences[:, prompt_length:]
         num_tokens = int((new_tokens != 0).sum())
         decode_seconds = elapsed - (result.get("prefill_seconds") or 0.0)
         result.update(
