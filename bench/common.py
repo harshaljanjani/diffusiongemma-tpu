@@ -168,6 +168,28 @@ def benchmark_prompts(args, family: str, model, device: torch.device):
     return encoded["input_ids"].to(device), encoded["attention_mask"].to(device)
 
 
+def describe_output(args, family: str, new_tokens: torch.Tensor) -> dict:
+    """
+    Summarizes generated tokens so that ranks and runs can be compared.
+
+    Args:
+        args (`argparse.Namespace`):
+            Parsed arguments providing `prompts`.
+        family (`str`):
+            `"diffusion"` or `"gemma4"`, which selects the tokenizer for decoding.
+        new_tokens (`torch.Tensor` of shape `(batch_size, num_new_tokens)`):
+            Generated token ids.
+
+    Returns:
+        `dict`: A checksum of the tokens and, for chat prompts, the decoded first sequence.
+    """
+    summary = {"token_checksum": int(new_tokens.sum())}
+    if args.prompts == "chat":
+        tokenizer = AutoTokenizer.from_pretrained(DIFFUSION_MODEL_ID if family == "diffusion" else GEMMA4_MODEL_ID)
+        summary["sample_text"] = tokenizer.decode(new_tokens[0].cpu(), skip_special_tokens=True)[:1500]
+    return summary
+
+
 def random_prompts(batch_size: int, prompt_length: int, vocab_size: int, device: torch.device, seed: int = 0):
     """
     Draws random prompt token ids on the host and moves them to the device.

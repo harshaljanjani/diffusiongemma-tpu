@@ -30,6 +30,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--expert-parallel", action="store_true")
     parser.add_argument("--warmup-runs", type=int, default=2)
     parser.add_argument("--timed-runs", type=int, default=3)
+    parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--label", default="")
     parser.add_argument("--output", default=None)
     return parser.parse_args()
@@ -93,6 +94,7 @@ def main() -> None:
             args.expert_parallel,
         )
     input_ids, attention_mask = benchmark_prompts(args, "diffusion", model, device)
+    torch.manual_seed(args.seed)
     prompt_length = input_ids.shape[1]
     generation_kwargs = {}
     if args.max_denoising_steps is not None:
@@ -131,6 +133,7 @@ def main() -> None:
         )
         if result.get("num_denoising_steps"):
             result["seconds_per_step"] = decode_seconds / result["num_denoising_steps"]
+        result.update(describe_output(args, "diffusion", new_tokens))
         runs.append(result)
 
     record = {

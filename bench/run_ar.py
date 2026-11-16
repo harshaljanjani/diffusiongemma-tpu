@@ -29,6 +29,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--expert-parallel", action="store_true")
     parser.add_argument("--warmup-runs", type=int, default=2)
     parser.add_argument("--timed-runs", type=int, default=3)
+    parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--label", default="")
     parser.add_argument("--output", default=None)
     return parser.parse_args()
@@ -90,6 +91,7 @@ def main() -> None:
             args.expert_parallel,
         )
     input_ids, attention_mask = benchmark_prompts(args, "gemma4", model, device)
+    torch.manual_seed(args.seed)
     prompt_length = input_ids.shape[1]
     build = run_static if args.sampler == "static" else run_transformers
     generate = build(args, model, device, input_ids, attention_mask)
@@ -120,6 +122,7 @@ def main() -> None:
             decoded_tokens_per_second=new_tokens.numel() / decode_seconds,
             seconds_per_step=decode_seconds / new_tokens.shape[1],
         )
+        result.update(describe_output(args, "gemma4", new_tokens))
         runs.append(result)
 
     record = {
