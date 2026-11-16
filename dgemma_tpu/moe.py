@@ -8,7 +8,7 @@ from transformers.integrations.moe import (
 DENSE_EXPERTS = "dense_all_experts"
 DENSE_PREWEIGHTED_EXPERTS = "dense_preweighted"
 TOKEN_COUNT_EXPERTS = "by_token_count"
-BATCHED_MAX_TOKENS = 2
+BATCHED_MAX_TOKENS = 4
 DENSE_MAX_TOKENS = 1536
 
 
@@ -79,7 +79,7 @@ def token_count_experts_forward(
     """
     Picks the fastest experts implementation on TPU v6e for the number of tokens in the pass.
 
-    Gathering the selected expert weights wins for one or two tokens, running all experts densely wins up to
+    Gathering the selected expert weights wins for a handful of tokens, running all experts densely wins up to
     roughly 1.5k tokens, and sorted grouped matmuls win beyond that.
 
     Args:

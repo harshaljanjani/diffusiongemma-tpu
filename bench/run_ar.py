@@ -3,7 +3,7 @@ import statistics
 import time
 
 import torch
-from common import DTYPES, benchmark_prompts, environment_info, load_model, write_result
+from common import DTYPES, benchmark_prompts, describe_output, environment_info, load_model, write_result
 
 from dgemma_tpu.ar_baseline import StaticAutoregressiveGenerator
 from dgemma_tpu.dist import spmd_decorator
