@@ -1,0 +1,29 @@
+/opt/dgemma/venv/lib/python3.12/site-packages/torch_tpu/__init__.py:37: UserWarning: <TorchTpu/Performance/TcMalloc/> tcmalloc is not loaded; TorchTPU host performance may be degraded due to glibc ptmalloc contention. Preload libtcmalloc before starting Python (e.g. LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libtcmalloc_minimal.so.4), or set PYTHONWARNINGS="ignore:<TorchTpu/Performance/TcMalloc/" to suppress this warning.
+  _tcmalloc_check.check_tcmalloc()
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1794301110.296308   43428 pjrt_api.cc:119] GetPjrtApi was found for TPU at /opt/dgemma/venv/lib/python3.12/site-packages/libtpu/libtpu.so
+I0000 00:00:1794301111.382073   43428 device_rt.cc:166] PjRt runtime initialization deferred for tpu
+Successfully renamed PrivateUse1 backend to 'tpu'. Device: device(type='tpu')
+Registered Python module for 'tpu'.
+Device type: tpu, Device index: default
+Initializing TPU distributed runtime
+I0000 00:00:1794301111.384822   43428 libtpu_version.cc:63] Setting libtpu version to: 0.0.52
+I0000 00:00:1794301112.465062   43428 pjrt_api.cc:168] The PJRT plugin has PJRT API version 0.117. The framework PJRT API version is 0.116.
+I0000 00:00:1794301113.691123   43428 pjrt_c_api_client.cc:187] PjRtCApiClient created.
+I0000 00:00:1794301181.789366   43647 compilation_cache_utils.cc:218] Tier-3 compilation cache root directory: /opt/tpu-compile-cache
+I0000 00:00:1794301181.789428   43647 tier2_compilation_cache.cc:72] Tier-2 compilation cache is enabled with name 'default' because tier-3 is enabled.
+I0000 00:00:1794301181.789434   43647 tier3_compilation_cache.cc:57] Backup compilation for tier-3 cache read is enabled by default.
+I0000 00:00:1794301181.791292   43875 compilation_cache_utils.cc:99] Tier-2 cache uses TorchTPU binary fingerprint: db58e6e353078fff
+  based on TorchTPU binary version 5 and PjRt version:
+TFRT TPU v6 lite
+Built on Nov 5 2026 01:07:28 (1793869648) cl/1014260217
+C API version: 0.117
+[W1110 08:59:41.108788886 env_vars.h:405] Warning: <TorchTpu/ApiStage/ExperimentalApi/> the TORCH_TPU_TIER3_COMPILATION_CACHE_ROOT environment variable is an experimental feature and may change or be removed without notice. (function operator())
+I0000 00:00:1794301186.096262   43874 tier3_compilation_cache.cc:84] Tier-3 compilation cache path for this process: /opt/tpu-compile-cache/db58e6e353078fff
+{"benchmark": "autoregressive", "args": {"model": "proxy:6", "device": "auto", "dtype": "bfloat16", "sampler": "static", "compile": "auto", "batch_size": 4, "prompt_length": 200, "prompt_bucket": 128, "max_new_tokens": 256, "stop_check_interval": 16, "do_sample": false, "attn_implementation": null, "experts_implementation": "by_token_count", "expert_parallel": false, "warmup_runs": 2, "timed_runs": 2, "label": "autoregressive_by_token_count_b4", "output": "/opt/dgemma/repo/results/session1b/results.jsonl"}, "environment": {"torch": "2.15.0+cpu", "transformers": "5.22.2", "python": "3.12.16", "device": "tpu", "timestamp": "2026-11-10T09:00:10Z", "torch_tpu": "unknown", "device_count": 1}, "load_seconds": 68.07749041900024, "warmup_seconds": [20.233135319999747, 2.8453200240001024], "median_tokens_per_second": 364.3154444194125, "median_total_seconds": 2.8359614534999764, "peak_memory_bytes": 14842291712, "runs": [{"num_decode_steps": 256, "num_stop_checks": 15, "prefill_seconds": 0.025227726000139228, "total_seconds": 2.836703368000144, "generated_tokens": 1024, "decoded_tokens": 1024, "tokens_per_second": 364.22154426760574, "seconds_per_step": 0.010982326726562519}, {"num_decode_steps": 256, "num_stop_checks": 15, "prefill_seconds": 0.02519280600017737, "total_seconds": 2.8352195389998087, "generated_tokens": 1024, "decoded_tokens": 1024, "tokens_per_second": 364.4093445712192, "seconds_per_step": 0.01097666692577981}]}
+I0000 00:00:1794301211.545653   43428 compilation_cache.cc:356] Compilation cache evicted.
+I0000 00:00:1794301211.545728   43428 compilation_cache.cc:203] CompilationCache final stats: num_cache_reqs=112
+num_cache_hits=94 {83.9%}
+num_compilations=2
+peak_compilation_memory_bytes=unknown
+

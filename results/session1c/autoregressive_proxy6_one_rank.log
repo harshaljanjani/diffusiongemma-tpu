@@ -1,0 +1,48 @@
+/opt/dgemma/venv/lib/python3.12/site-packages/torch_tpu/__init__.py:37: UserWarning: <TorchTpu/Performance/TcMalloc/> tcmalloc is not loaded; TorchTPU host performance may be degraded due to glibc ptmalloc contention. Preload libtcmalloc before starting Python (e.g. LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libtcmalloc_minimal.so.4), or set PYTHONWARNINGS="ignore:<TorchTpu/Performance/TcMalloc/" to suppress this warning.
+  _tcmalloc_check.check_tcmalloc()
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1794301900.821949   48153 pjrt_api.cc:119] GetPjrtApi was found for TPU at /opt/dgemma/venv/lib/python3.12/site-packages/libtpu/libtpu.so
+I0000 00:00:1794301901.968863   48153 device_rt.cc:166] PjRt runtime initialization deferred for tpu
+Successfully renamed PrivateUse1 backend to 'tpu'. Device: device(type='tpu')
+Registered Python module for 'tpu'.
+Device type: tpu, Device index: default
+Initializing TPU distributed runtime
+I0000 00:00:1794301901.971535   48153 libtpu_version.cc:63] Setting libtpu version to: 0.0.52
+/opt/dgemma/venv/lib/python3.12/site-packages/torch_tpu/__init__.py:37: UserWarning: <TorchTpu/Performance/TcMalloc/> tcmalloc is not loaded; TorchTPU host performance may be degraded due to glibc ptmalloc contention. Preload libtcmalloc before starting Python (e.g. LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libtcmalloc_minimal.so.4), or set PYTHONWARNINGS="ignore:<TorchTpu/Performance/TcMalloc/" to suppress this warning.
+  _tcmalloc_check.check_tcmalloc()
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1794301904.125196   48200 pjrt_api.cc:119] GetPjrtApi was found for TPU at /opt/dgemma/venv/lib/python3.12/site-packages/libtpu/libtpu.so
+I0000 00:00:1794301905.213543   48200 device_rt.cc:166] PjRt runtime initialization deferred for tpu
+Successfully renamed PrivateUse1 backend to 'tpu'. Device: device(type='tpu')
+Registered Python module for 'tpu'.
+Device type: tpu, Device index: default
+Initializing TPU distributed runtime
+I0000 00:00:1794301905.216232   48200 libtpu_version.cc:63] Setting libtpu version to: 0.0.52
+[W1110 09:11:46.585105145 env_vars.h:405] Warning: <TorchTpu/ApiStage/ExperimentalApi/> the TORCH_TPU_SLICEBUILDER_ADDRESSES environment variable is an experimental feature and may change or be removed without notice. (function operator())
+[W1110 09:11:46.585133755 env_vars.h:405] Warning: <TorchTpu/ApiStage/ExperimentalApi/> the TORCH_TPU_TOPOLOGY environment variable is an experimental feature and may change or be removed without notice. (function operator())
+I0000 00:00:1794301906.297842   48200 discovery.cc:125] DistributedWorkerConfiguration: 0 0 1 localhost:46035 46035 1,1,1
+I0000 00:00:1794301906.297880   48200 pjrt_api.cc:168] The PJRT plugin has PJRT API version 0.117. The framework PJRT API version is 0.116.
+I0000 00:00:1794301907.529074   48200 pjrt_c_api_client.cc:187] PjRtCApiClient created.
+W0000 00:00:1794301961.476808   48200 process_group_tpu.cc:1299] Node-local store disabled: LOCAL_RANK or TORCH_TPU_DEVICES_PER_HOST is unset (local_rank=0 devices_per_host=unset world_size=1). Every rank will publish to the world store individually, which is slower at scale.
+I0000 00:00:1794301961.477050   48200 process_group_tpu.cc:1269] AllGatherViaNodeLocalStore(world_topo:0:1): gathered 1 entries from 1 nodes in 0 ms
+/opt/dgemma/repo/dgemma_tpu/ar_baseline.py:114: UserWarning: <TorchTpu/ApiStage/ExperimentalApi/> spmd_safe is experimental and subject to change: torch.tpu.distributed.spmd_safe is experimental and subject to change.
+  self._prefill = torch.compile(decorate(self._prefill_impl), backend=compile_backend, **options)
+I0000 00:00:1794301975.626120   48417 compilation_cache_utils.cc:218] Tier-3 compilation cache root directory: /opt/tpu-compile-cache
+I0000 00:00:1794301975.626148   48417 tier2_compilation_cache.cc:72] Tier-2 compilation cache is enabled with name 'default' because tier-3 is enabled.
+I0000 00:00:1794301975.626154   48417 tier3_compilation_cache.cc:57] Backup compilation for tier-3 cache read is enabled by default.
+I0000 00:00:1794301975.628280   48549 compilation_cache_utils.cc:99] Tier-2 cache uses TorchTPU binary fingerprint: db58e6e353078fff
+  based on TorchTPU binary version 5 and PjRt version:
+TFRT TPU v6 lite
+Built on Nov 5 2026 01:07:28 (1793869648) cl/1014260217
+C API version: 0.117
+[rank0]:[W1110 09:12:55.947130896 env_vars.h:405] Warning: <TorchTpu/ApiStage/ExperimentalApi/> the TORCH_TPU_TIER3_COMPILATION_CACHE_ROOT environment variable is an experimental feature and may change or be removed without notice. (function operator())
+I0000 00:00:1794301980.250504   48548 tier3_compilation_cache.cc:84] Tier-3 compilation cache path for this process: /opt/tpu-compile-cache/db58e6e353078fff
+{"benchmark": "autoregressive", "args": {"model": "proxy:6", "device": "auto", "dtype": "bfloat16", "sampler": "static", "compile": "auto", "batch_size": 1, "prompt_length": 200, "prompt_bucket": 128, "max_new_tokens": 256, "stop_check_interval": 16, "do_sample": false, "attn_implementation": null, "experts_implementation": "by_token_count", "expert_parallel": true, "warmup_runs": 2, "timed_runs": 2, "label": "autoregressive_proxy6_one_rank", "output": "/opt/dgemma/repo/results/session1c/results.jsonl"}, "environment": {"torch": "2.15.0+cpu", "transformers": "5.22.2", "python": "3.12.16", "device": "tpu", "timestamp": "2026-11-10T09:13:19Z", "torch_tpu": "unknown", "device_count": 1}, "load_seconds": 68.06432804399992, "warmup_seconds": [21.341041341000164, 0.711001125000621], "median_tokens_per_second": 371.16075758585305, "median_total_seconds": 0.7015724699999737, "peak_memory_bytes": 12981339648, "runs": [{"num_decode_steps": 256, "num_stop_checks": 15, "prefill_seconds": 0.011830413000097906, "total_seconds": 0.7019635699998616, "generated_tokens": 256, "decoded_tokens": 256, "tokens_per_second": 370.9429077613317, "seconds_per_step": 0.002695832644530327}, {"num_decode_steps": 256, "num_stop_checks": 15, "prefill_seconds": 0.01185787399936089, "total_seconds": 0.7011813700000857, "generated_tokens": 256, "decoded_tokens": 256, "tokens_per_second": 371.37860741037446, "seconds_per_step": 0.0026926699062528314}]}
+/opt/dgemma/venv/lib/python3.12/site-packages/torch/distributed/c10d_logger.py:83: UserWarning: barrier(): using the device under current context. You can specify `device_id` in `init_process_group` to mute this warning.
+  return func(*args, **kwargs)
+I0000 00:00:1794302000.094732   48200 compilation_cache.cc:356] Compilation cache evicted.
+I0000 00:00:1794302000.094801   48200 compilation_cache.cc:203] CompilationCache final stats: num_cache_reqs=115
+num_cache_hits=95 {82.6%}
+num_compilations=2
+peak_compilation_memory_bytes=unknown
+

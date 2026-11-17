@@ -76,20 +76,23 @@ def run_transformers(args, model, device, input_ids, attention_mask):
     return generate
 
 
-def main() -> None:
-    args = parse_args()
-    device = resolve_device(args.device)
-    timings = {}
-    with timed(device, timings, "load_seconds"):
-        model = load_model(
-            "gemma4",
-            args.model,
-            device,
-            DTYPES[args.dtype],
-            args.attn_implementation,
-            args.experts_implementation,
-            args.expert_parallel,
-        )
+def benchmark(args, model, device, load_seconds: float | None = None) -> dict:
+    """
+    Runs the warmup and timed generations of one configuration.
+
+    Args:
+        args (`argparse.Namespace`):
+            Configuration of the run.
+        model (`PreTrainedModel`):
+            Loaded model.
+        device (`torch.device`):
+            Device the model is on.
+        load_seconds (`float`, *optional*):
+            Model loading time to record.
+
+    Returns:
+        `dict`: JSON-serializable benchmark record.
+    """
     input_ids, attention_mask = benchmark_prompts(args, "gemma4", model, device)
     torch.manual_seed(args.seed)
     prompt_length = input_ids.shape[1]
@@ -129,14 +132,31 @@ def main() -> None:
         "benchmark": "autoregressive",
         "args": vars(args),
         "environment": environment_info(device),
-        "load_seconds": timings["load_seconds"],
+        "load_seconds": load_seconds,
         "warmup_seconds": warmup_seconds,
         "median_tokens_per_second": statistics.median(run["tokens_per_second"] for run in runs),
         "median_total_seconds": statistics.median(run["total_seconds"] for run in runs),
         "peak_memory_bytes": peak_memory_bytes(device),
         "runs": runs,
     }
-    write_result(args.output, record)
+    return record
+
+
+def main() -> None:
+    args = parse_args()
+    device = resolve_device(args.device)
+    timings = {}
+    with timed(device, timings, "load_seconds"):
+        model = load_model(
+            "gemma4",
+            args.model,
+            device,
+            DTYPES[args.dtype],
+            args.attn_implementation,
+            args.experts_implementation,
+            args.expert_parallel,
+        )
+    write_result(args.output, benchmark(args, model, device, timings["load_seconds"]))
 
 
 if __name__ == "__main__":
