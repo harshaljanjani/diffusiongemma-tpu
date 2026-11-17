@@ -2,6 +2,7 @@ from contextlib import contextmanager
 
 import torch
 
+import dgemma_tpu.generate
 from dgemma_tpu.sampler import gumbel_max_sample
 
 
@@ -28,3 +29,21 @@ def reference_generate(model, input_ids, seed, attention_mask=None, **generation
     torch.manual_seed(seed)
     with gumbel_multinomial():
         return model.generate(input_ids, disable_compile=True, **generation_kwargs)
+
+
+def reference_token_distribution(logits):
+    """Computes the token statistics with the exact operations of the Transformers sampler."""
+    probs = torch.softmax(logits, dim=-1, dtype=torch.float32)
+    entropy = torch.distributions.Categorical(logits=logits).entropy()
+    return torch.log(probs), probs, entropy
+
+
+@contextmanager
+def reference_numerics():
+    """Makes the static sampler use the reference numerics, so equality tests only exercise its control flow."""
+    original = dgemma_tpu.generate.token_distribution
+    dgemma_tpu.generate.token_distribution = reference_token_distribution
+    try:
+        yield
+    finally:
+        dgemma_tpu.generate.token_distribution = original

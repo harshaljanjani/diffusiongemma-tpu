@@ -16,6 +16,7 @@ export TORCH_TPU_TIER3_COMPILATION_CACHE_ROOT=/opt/tpu-compile-cache
 cd "$REPO_DIR/bench"
 
 echo "=== download start"
+"$PYTHON" -m pytest -q "$REPO_DIR/tests" > "$RESULTS/unit_tests.log" 2>&1 &
 "$VENV/bin/hf" download google/diffusiongemma-26B-A4B-it > "$RESULTS/download_diffusion.log" 2>&1 &
 "$VENV/bin/hf" download google/gemma-4-26B-A4B-it > "$RESULTS/download_gemma4.log" 2>&1 &
 "$PYTHON" -c "from datasets import load_dataset; load_dataset('openai/gsm8k', 'main', split='test')" > "$RESULTS/download_gsm8k.log" 2>&1
