@@ -27,7 +27,7 @@ for ZONE in "$@"; do
     --image-project=ubuntu-os-accelerator-images \
     --image-family=ubuntu-accel-2204-amd64-tpu-v5e-v5p-v6e \
     --maintenance-policy=TERMINATE \
-    --provisioning-model=SPOT \
+    --provisioning-model="${PROVISIONING_MODEL:-SPOT}" \
     --instance-termination-action=DELETE \
     --max-run-duration="$MAX_RUN_DURATION" \
     --boot-disk-size="${DISK_GB}GB" \
