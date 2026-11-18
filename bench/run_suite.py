@@ -29,7 +29,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--compile", default="auto")
     parser.add_argument("--expert-parallel", action="store_true")
     parser.add_argument("--experts-implementation", default=TOKEN_COUNT_EXPERTS)
-    parser.add_argument("--batch-sizes", type=int, nargs="+", default=[1])
+    parser.add_argument("--batch-sizes", type=int, nargs="*", default=[1])
+    parser.add_argument("--variant-batch-size", type=int, default=1)
     parser.add_argument("--variants", nargs="*", default=[], choices=sorted(VARIANTS))
     parser.add_argument("--prompts", default="chat", choices=["random", "chat"])
     parser.add_argument("--prompt-length", type=int, default=64)
@@ -103,7 +104,7 @@ def main() -> None:
     benchmark = run_diffusion.benchmark if args.family == "diffusion" else run_ar.benchmark
 
     configurations = [(batch_size, None) for batch_size in args.batch_sizes]
-    configurations += [(args.batch_sizes[0], variant) for variant in args.variants]
+    configurations += [(args.variant_batch_size, variant) for variant in args.variants]
     for batch_size, variant in configurations:
         config = configuration(args, batch_size, variant)
         set_experts_implementation(model, config.experts_implementation)
