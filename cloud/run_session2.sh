@@ -16,13 +16,14 @@ export TORCH_TPU_TIER3_COMPILATION_CACHE_ROOT=/opt/tpu-compile-cache
 cd "$REPO_DIR/bench"
 
 echo "=== download start"
-"$PYTHON" -m pytest -q "$REPO_DIR/tests" > "$RESULTS/unit_tests.log" 2>&1 &
 "$VENV/bin/hf" download google/diffusiongemma-26B-A4B-it > "$RESULTS/download_diffusion.log" 2>&1 &
+DIFFUSION_DOWNLOAD=$!
 "$VENV/bin/hf" download google/gemma-4-26B-A4B-it > "$RESULTS/download_gemma4.log" 2>&1 &
+GEMMA4_DOWNLOAD=$!
 "$PYTHON" -c "from datasets import load_dataset; load_dataset('openai/gsm8k', 'main', split='test')" > "$RESULTS/download_gsm8k.log" 2>&1
-wait
-echo "=== download done seconds=$SECONDS"
-du -sh /opt/hf-cache/hub/models--* 2> /dev/null
+"$PYTHON" -m pytest -q "$REPO_DIR/tests" > "$RESULTS/unit_tests.log" 2>&1
+wait "$DIFFUSION_DOWNLOAD"
+echo "=== diffusion weights ready seconds=$SECONDS"
 
 eval "$("$PYTHON" -m torch.tpu.distributed | sed 's/^/export /')"
 echo "WORLD_SIZE=${WORLD_SIZE:-unset} TORCH_TPU_TOPOLOGY=${TORCH_TPU_TOPOLOGY:-unset}"
@@ -37,9 +38,9 @@ suite() {
   echo "=== stage $name exit=$? seconds=$((SECONDS - start))"
 }
 
-suite diffusion_smoke --family diffusion --batch-sizes 1 --timed-runs 1 --label smoke_
-suite autoregressive_smoke --family gemma4 --batch-sizes 1 --timed-runs 1 --label smoke_
 suite diffusion --family diffusion --batch-sizes $BATCH_SIZES --variants grouped check1 check0 --gsm8k-examples 50
+wait "$GEMMA4_DOWNLOAD"
+echo "=== gemma4 weights ready seconds=$SECONDS"
 suite autoregressive --family gemma4 --batch-sizes $BATCH_SIZES --variants grouped sampled --gsm8k-examples 50
 
 echo "=== session 2 finished"
