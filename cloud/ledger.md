@@ -7,8 +7,10 @@ estimates from wall-clock time and exclude boot disks, which add a few cents per
 |---|---|---|---|---|---|---|---|
 | Probe | 2026-11-10 06:50 | ct6e-standard-1t | europe-west4-a | $1.78/h | 2 min | $0.06 | Quota and capacity check |
 | 1 | 2026-11-10 07:53 to 09:26 | ct6e-standard-1t | europe-west4-a | $1.78/h | 1.55 h | $2.76 | Single-chip study: operator coverage, execution modes, expert implementations, proxy models |
+| 2, attempt 1 | 2026-11-10 09:48 to 09:51 | ct6e-standard-4t | us-east1-d | $2.82/h | 3 min | $0.14 | Preempted during bootstrap |
+| 2, attempt 2 | 2026-11-10 10:00 to 10:11 | ct6e-standard-4t | us-east1-d | $2.82/h | 11 min | $0.52 | Released DiffusionGemma on four chips at batch 1 and 4, then preempted |
 
-Running total: about $2.82.
+Running total: about $3.48.
 
 ## Spot price per v6e chip-hour by region
 

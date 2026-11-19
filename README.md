@@ -41,6 +41,25 @@ On CPU the rewritten sampler produces the same tokens as the Transformers dynami
 the same noise (`tests/test_equivalence.py`), compiles each stage exactly once and syncs with the host only at stop
 checks (`tests/test_static_graphs.py`).
 
+## Four-chip results (TPU v6e-4, released weights)
+
+The released 26B model is 48 GiB in bf16 and one v6e chip has 32 GB, so it runs as four processes, one per chip.
+Every expert is sliced along its intermediate dimension, each chip computes its slice, and one all-reduce per layer
+adds the partial outputs (`dgemma_tpu/dist.py`). Everything else is replicated. Each chip holds about 17 GiB.
+
+DiffusionGemma, static sampler, chat prompts, 512 new tokens, adaptive stopping checked every 4 steps:
+
+| Batch | Tokens per second | Time per denoising step | Steps for two canvases | Tokens per forward pass |
+|---|---|---|---|---|
+| 1 | 861 | 21.2 ms | 28 | 21.3 |
+| 4 | 720 | 49.8 ms | 56 | 10.2 to 19.7 per sequence |
+
+At batch 1 the first compiled call takes 88 s and later calls 0.61 s for 512 tokens. In a batch every sequence keeps
+stepping until the slowest one settles, which is why batch 4 runs 56 steps where batch 1 runs 28.
+
+These numbers come from a Spot VM that was preempted after 11 minutes (`results/session2_preempted`); the
+autoregressive baseline on the same four chips is the next run.
+
 ## Single-chip results (TPU v6e, one chip)
 
 These runs use a randomly initialized model with the released width, vocabulary, expert count and canvas length but
