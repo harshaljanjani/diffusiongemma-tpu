@@ -148,9 +148,14 @@ class BlockDiffusionStaticCache:
         self.max_length = max_length
         self.sliding_window = text_config.sliding_window
         self.window_length = min(self.sliding_window - 1, max_length)
+        # When nothing can ever leave the window, sliding layers behave like full ones and skip the per-update
+        # shift of the whole buffer, which matters for one-token autoregressive steps.
+        self.fits_in_window = max_length <= self.sliding_window - 1
         self.is_sliding = [layer_type == "sliding_attention" for layer_type in text_config.layer_types]
         self.layers = [
-            SlidingAttentionLayer(self.window_length) if is_sliding else FullAttentionLayer(max_length)
+            SlidingAttentionLayer(self.window_length)
+            if is_sliding and not self.fits_in_window
+            else FullAttentionLayer(max_length)
             for is_sliding in self.is_sliding
         ]
         self.length = torch.zeros((), dtype=torch.long, device=device)
@@ -187,7 +192,8 @@ class BlockDiffusionStaticCache:
         num_tokens = token_valid.shape[1]
         slots = torch.arange(num_tokens, device=token_valid.device) + self.length
         self.slot_valid.index_copy_(1, slots, token_valid)
-        self.window_valid.copy_(torch.cat([self.window_valid, token_valid], dim=1)[:, -self.window_length :])
+        if not self.fits_in_window:
+            self.window_valid.copy_(torch.cat([self.window_valid, token_valid], dim=1)[:, -self.window_length :])
         self.length.add_(num_tokens)
 
     def reset(self) -> None:
@@ -231,6 +237,8 @@ class BlockDiffusionStaticCache:
         is_self = key_slot[None, :] == query_slot[:, None]
         causal = key_slot[None, :] <= query_slot[:, None]
         full_mask = (valid_after[:, None, :] & causal[None]) | is_self[None]
+        if self.fits_in_window:
+            return {"full_attention": full_mask[:, None], "sliding_attention": full_mask[:, None]}
 
         window_index = torch.arange(self.window_length, device=device)
         window_distance = self.window_length + query_index[:, None] - window_index[None, :]
@@ -257,7 +265,8 @@ class BlockDiffusionStaticCache:
         """
         canvas_valid = torch.ones(self.batch_size, canvas_length, dtype=torch.bool, device=self.length.device)
         full_mask = torch.cat([self.slot_valid, canvas_valid], dim=1)
-        sliding_mask = torch.cat([self.window_valid, canvas_valid], dim=1)
+        sliding_valid = self.slot_valid if self.fits_in_window else self.window_valid
+        sliding_mask = torch.cat([sliding_valid, canvas_valid], dim=1)
         return {
             "full_attention": full_mask[:, None, None, :].expand(-1, -1, canvas_length, -1),
             "sliding_attention": sliding_mask[:, None, None, :].expand(-1, -1, canvas_length, -1),

@@ -1,0 +1,56 @@
+No entry for terminal type "unknown";
+using dumb terminal settings.
+..................F................                                      [100%]
+=================================== FAILURES ===================================
+_______________ test_matches_transformers_dynamic_cache[2-5-512] _______________
+
+tiny_model_factory = <function build_tiny_model at 0x76677db2c180>
+sliding_window = 512, prompt_length = 5, batch_size = 2
+
+    @pytest.mark.parametrize("sliding_window", [8, 24, 512])
+    @pytest.mark.parametrize("prompt_length", [5, 12, 40])
+    @pytest.mark.parametrize("batch_size", [1, 2])
+    def test_matches_transformers_dynamic_cache(tiny_model_factory, sliding_window, prompt_length, batch_size):
+        model = tiny_model_factory(sliding_window=sliding_window)
+        torch.manual_seed(7)
+        input_ids = torch.randint(3, 500, (batch_size, prompt_length))
+        reference = reference_generate(
+            model, input_ids, seed=3, max_new_tokens=64, max_denoising_steps=8, eos_token_id=1, pad_token_id=0
+        )
+        output = static_generate(
+            model,
+            input_ids,
+            seed=3,
+            max_new_tokens=64,
+            prompt_bucket=1,
+            max_denoising_steps=8,
+            eos_token_id=1,
+            pad_token_id=0,
+        )
+>       assert torch.equal(output.sequences, reference.sequences)
+E       assert False
+E        +  where False = <built-in method equal of type object at 0x76677d005f40>(tensor([[435, 240, 394, 256, 200, 435,  72, 117, 486, 138, 191, 500, 323,  71,\n           7, 503, 319,  76, 406, 405, ... 0,   0,   0,   0,   0,   0,   0,   0,   0,\n           0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0]]), tensor([[435, 240, 394, 256, 200, 435,  72, 117, 486, 138, 191, 500, 323,  71,\n           7, 503, 319,  76, 406, 405, ... 0,   0,   0,   0,   0,   0,   0,   0,   0,\n           0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0]]))
+E        +    where <built-in method equal of type object at 0x76677d005f40> = torch.equal
+E        +    and   tensor([[435, 240, 394, 256, 200, 435,  72, 117, 486, 138, 191, 500, 323,  71,\n           7, 503, 319,  76, 406, 405, ... 0,   0,   0,   0,   0,   0,   0,   0,   0,\n           0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0]]) = BlockDiffusionOutput(sequences=tensor([[435, 240, 394, 256, 200, 435,  72, 117, 486, 138, 191, 500, 323,  71,\n        ...num_denoising_steps=32, num_stop_checks=28, prompt_length=5, pad_token_id=0, prefill_seconds=None, canvas_seconds=None).sequences
+E        +    and   tensor([[435, 240, 394, 256, 200, 435,  72, 117, 486, 138, 191, 500, 323,  71,\n           7, 503, 319,  76, 406, 405, ... 0,   0,   0,   0,   0,   0,   0,   0,   0,\n           0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0]]) = DiffusionGemmaGenerationOutput(sequences=tensor([[435, 240, 394, 256, 200, 435,  72, 117, 486, 138, 191, 500, 323,  71...dingWindowLayer, DynamicLayer, DynamicSlidingWindowLayer, DynamicLayer]), logits=None, scores=None, hidden_states=None).sequences
+
+../tests/test_equivalence.py:36: AssertionError
+=============================== warnings summary ===============================
+../../venv/lib/python3.12/site-packages/torch_tpu/__init__.py:37
+  /opt/dgemma/venv/lib/python3.12/site-packages/torch_tpu/__init__.py:37: UserWarning: <TorchTpu/Performance/TcMalloc/> tcmalloc is not loaded; TorchTPU host performance may be degraded due to glibc ptmalloc contention. Preload libtcmalloc before starting Python (e.g. LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libtcmalloc_minimal.so.4), or set PYTHONWARNINGS="ignore:<TorchTpu/Performance/TcMalloc/" to suppress this warning.
+    _tcmalloc_check.check_tcmalloc()
+
+../../venv/lib/python3.12/site-packages/huggingface_hub/constants.py:302
+  /opt/dgemma/venv/lib/python3.12/site-packages/huggingface_hub/constants.py:302: FutureWarning: The `HF_HUB_ENABLE_HF_TRANSFER` environment variable is deprecated as 'hf_transfer' is not used anymore. Please use `HF_XET_HIGH_PERFORMANCE` instead to enable high performance transfer with Xet. Visit https://huggingface.co/docs/huggingface_hub/package_reference/environment_variables#hfxethighperformance for more details.
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED ../tests/test_equivalence.py::test_matches_transformers_dynamic_cache[2-5-512]
+1 failed, 34 passed, 2 warnings in 71.51s (0:01:11)
+I0000 00:00:1794310874.997847    5847 compilation_cache.cc:356] Compilation cache evicted.
+I0000 00:00:1794310874.999390    5847 compilation_cache.cc:203] CompilationCache final stats: num_cache_reqs=0
+num_cache_hits=0 {NA}
+num_compilations=0
+peak_compilation_memory_bytes=unknown
+
