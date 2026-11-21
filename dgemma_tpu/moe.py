@@ -80,7 +80,7 @@ def token_count_experts_forward(
     Picks the fastest experts implementation on TPU v6e for the number of tokens in the pass.
 
     Gathering the selected expert weights wins for a handful of tokens, running all experts densely wins up to
-    roughly 1.5k tokens, and sorted grouped matmuls win beyond that.
+    roughly 1.5k tokens per expert shard, and sorted grouped matmuls win beyond that.
 
     Args:
         hidden_states (`torch.Tensor` of shape `(num_tokens, hidden_size)`):
@@ -96,7 +96,9 @@ def token_count_experts_forward(
     num_tokens = hidden_states.shape[0]
     if num_tokens <= BATCHED_MAX_TOKENS:
         return batched_mm_experts_forward(self, hidden_states, top_k_index, top_k_weights)
-    if num_tokens <= DENSE_MAX_TOKENS:
+    shard = getattr(self, "_expert_shard", None)
+    num_shards = shard[1] if isinstance(shard, tuple) else getattr(self, "_num_expert_shards", 1)
+    if num_tokens <= DENSE_MAX_TOKENS * num_shards:
         return dense_preweighted_experts_forward(self, hidden_states, top_k_index, top_k_weights)
     return grouped_mm_experts_forward(self, hidden_states, top_k_index, top_k_weights)
 

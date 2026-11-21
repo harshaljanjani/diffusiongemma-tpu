@@ -76,6 +76,7 @@ def _expert_modules(model: torch.nn.Module) -> list[torch.nn.Module]:
                 modules.append(module)
             else:
                 module._expert_shard = "shared"
+                module._num_expert_shards = dist.get_world_size()
                 module.forward = _all_reduced(module.forward)
     return modules
 

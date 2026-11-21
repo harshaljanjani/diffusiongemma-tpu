@@ -26,6 +26,6 @@ suite() {
 }
 
 suite autoregressive --family gemma4 --batch-sizes 1 4 16 2 8 --timed-runs 2
-suite diffusion --family diffusion --batch-sizes 1 4 --timed-runs 2
+suite diffusion --family diffusion --batch-sizes 1 16 8 4 --timed-runs 2
 
 echo "=== session 2c finished"
