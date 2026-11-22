@@ -1,0 +1,136 @@
+/opt/dgemma/venv/lib/python3.12/site-packages/torch_tpu/__init__.py:37: UserWarning: <TorchTpu/Performance/TcMalloc/> tcmalloc is not loaded; TorchTPU host performance may be degraded due to glibc ptmalloc contention. Preload libtcmalloc before starting Python (e.g. LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libtcmalloc_minimal.so.4), or set PYTHONWARNINGS="ignore:<TorchTpu/Performance/TcMalloc/" to suppress this warning.
+  _tcmalloc_check.check_tcmalloc()
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1794314801.143690   74825 pjrt_api.cc:119] GetPjrtApi was found for TPU at /opt/dgemma/venv/lib/python3.12/site-packages/libtpu/libtpu.so
+I0000 00:00:1794314802.257574   74825 device_rt.cc:166] PjRt runtime initialization deferred for tpu
+Successfully renamed PrivateUse1 backend to 'tpu'. Device: device(type='tpu')
+Registered Python module for 'tpu'.
+Device type: tpu, Device index: default
+Initializing TPU distributed runtime
+I0000 00:00:1794314802.260138   74825 libtpu_version.cc:63] Setting libtpu version to: 0.0.52
+W1110 12:46:42.284000 74825 torch/distributed/run.py:982] 
+W1110 12:46:42.284000 74825 torch/distributed/run.py:982] *****************************************
+W1110 12:46:42.284000 74825 torch/distributed/run.py:982] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W1110 12:46:42.284000 74825 torch/distributed/run.py:982] *****************************************
+/opt/dgemma/venv/lib/python3.12/site-packages/torch_tpu/__init__.py:37: UserWarning: <TorchTpu/Performance/TcMalloc/> tcmalloc is not loaded; TorchTPU host performance may be degraded due to glibc ptmalloc contention. Preload libtcmalloc before starting Python (e.g. LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libtcmalloc_minimal.so.4), or set PYTHONWARNINGS="ignore:<TorchTpu/Performance/TcMalloc/" to suppress this warning.
+  _tcmalloc_check.check_tcmalloc()
+/opt/dgemma/venv/lib/python3.12/site-packages/torch_tpu/__init__.py:37: UserWarning: <TorchTpu/Performance/TcMalloc/> tcmalloc is not loaded; TorchTPU host performance may be degraded due to glibc ptmalloc contention. Preload libtcmalloc before starting Python (e.g. LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libtcmalloc_minimal.so.4), or set PYTHONWARNINGS="ignore:<TorchTpu/Performance/TcMalloc/" to suppress this warning.
+  _tcmalloc_check.check_tcmalloc()
+/opt/dgemma/venv/lib/python3.12/site-packages/torch_tpu/__init__.py:37: UserWarning: <TorchTpu/Performance/TcMalloc/> tcmalloc is not loaded; TorchTPU host performance may be degraded due to glibc ptmalloc contention. Preload libtcmalloc before starting Python (e.g. LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libtcmalloc_minimal.so.4), or set PYTHONWARNINGS="ignore:<TorchTpu/Performance/TcMalloc/" to suppress this warning.
+  _tcmalloc_check.check_tcmalloc()
+/opt/dgemma/venv/lib/python3.12/site-packages/torch_tpu/__init__.py:37: UserWarning: <TorchTpu/Performance/TcMalloc/> tcmalloc is not loaded; TorchTPU host performance may be degraded due to glibc ptmalloc contention. Preload libtcmalloc before starting Python (e.g. LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libtcmalloc_minimal.so.4), or set PYTHONWARNINGS="ignore:<TorchTpu/Performance/TcMalloc/" to suppress this warning.
+  _tcmalloc_check.check_tcmalloc()
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1794314804.462077   74899 pjrt_api.cc:119] GetPjrtApi was found for TPU at /opt/dgemma/venv/lib/python3.12/site-packages/libtpu/libtpu.so
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1794314804.482559   74898 pjrt_api.cc:119] GetPjrtApi was found for TPU at /opt/dgemma/venv/lib/python3.12/site-packages/libtpu/libtpu.so
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1794314804.482923   74901 pjrt_api.cc:119] GetPjrtApi was found for TPU at /opt/dgemma/venv/lib/python3.12/site-packages/libtpu/libtpu.so
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1794314804.496814   74900 pjrt_api.cc:119] GetPjrtApi was found for TPU at /opt/dgemma/venv/lib/python3.12/site-packages/libtpu/libtpu.so
+I0000 00:00:1794314805.559776   74899 device_rt.cc:166] PjRt runtime initialization deferred for tpu
+Successfully renamed PrivateUse1 backend to 'tpu'. Device: device(type='tpu')
+Registered Python module for 'tpu'.
+Device type: tpu, Device index: default
+Initializing TPU distributed runtime
+I0000 00:00:1794314805.562249   74899 libtpu_version.cc:63] Setting libtpu version to: 0.0.52
+/opt/dgemma/venv/lib/python3.12/site-packages/huggingface_hub/constants.py:302: FutureWarning: The `HF_HUB_ENABLE_HF_TRANSFER` environment variable is deprecated as 'hf_transfer' is not used anymore. Please use `HF_XET_HIGH_PERFORMANCE` instead to enable high performance transfer with Xet. Visit https://huggingface.co/docs/huggingface_hub/package_reference/environment_variables#hfxethighperformance for more details.
+  warnings.warn(
+I0000 00:00:1794314805.586583   74901 device_rt.cc:166] PjRt runtime initialization deferred for tpu
+Successfully renamed PrivateUse1 backend to 'tpu'. Device: device(type='tpu')
+Registered Python module for 'tpu'.
+Device type: tpu, Device index: default
+Initializing TPU distributed runtime
+I0000 00:00:1794314805.589070   74901 libtpu_version.cc:63] Setting libtpu version to: 0.0.52
+I0000 00:00:1794314805.590861   74898 device_rt.cc:166] PjRt runtime initialization deferred for tpu
+Successfully renamed PrivateUse1 backend to 'tpu'. Device: device(type='tpu')
+Registered Python module for 'tpu'.
+Device type: tpu, Device index: default
+Initializing TPU distributed runtime
+I0000 00:00:1794314805.593391   74898 libtpu_version.cc:63] Setting libtpu version to: 0.0.52
+/opt/dgemma/venv/lib/python3.12/site-packages/huggingface_hub/constants.py:302: FutureWarning: The `HF_HUB_ENABLE_HF_TRANSFER` environment variable is deprecated as 'hf_transfer' is not used anymore. Please use `HF_XET_HIGH_PERFORMANCE` instead to enable high performance transfer with Xet. Visit https://huggingface.co/docs/huggingface_hub/package_reference/environment_variables#hfxethighperformance for more details.
+  warnings.warn(
+/opt/dgemma/venv/lib/python3.12/site-packages/huggingface_hub/constants.py:302: FutureWarning: The `HF_HUB_ENABLE_HF_TRANSFER` environment variable is deprecated as 'hf_transfer' is not used anymore. Please use `HF_XET_HIGH_PERFORMANCE` instead to enable high performance transfer with Xet. Visit https://huggingface.co/docs/huggingface_hub/package_reference/environment_variables#hfxethighperformance for more details.
+  warnings.warn(
+I0000 00:00:1794314805.639988   74900 device_rt.cc:166] PjRt runtime initialization deferred for tpu
+Successfully renamed PrivateUse1 backend to 'tpu'. Device: device(type='tpu')
+Registered Python module for 'tpu'.
+Device type: tpu, Device index: default
+Initializing TPU distributed runtime
+I0000 00:00:1794314805.642494   74900 libtpu_version.cc:63] Setting libtpu version to: 0.0.52
+/opt/dgemma/venv/lib/python3.12/site-packages/huggingface_hub/constants.py:302: FutureWarning: The `HF_HUB_ENABLE_HF_TRANSFER` environment variable is deprecated as 'hf_transfer' is not used anymore. Please use `HF_XET_HIGH_PERFORMANCE` instead to enable high performance transfer with Xet. Visit https://huggingface.co/docs/huggingface_hub/package_reference/environment_variables#hfxethighperformance for more details.
+  warnings.warn(
+[W1110 12:46:47.801766946 env_vars.h:405] Warning: <TorchTpu/ApiStage/ExperimentalApi/> the TORCH_TPU_SLICEBUILDER_ADDRESSES environment variable is an experimental feature and may change or be removed without notice. (function operator())
+[W1110 12:46:47.801795926 env_vars.h:405] Warning: <TorchTpu/ApiStage/ExperimentalApi/> the TORCH_TPU_TOPOLOGY environment variable is an experimental feature and may change or be removed without notice. (function operator())
+I0000 00:00:1794314807.059145   74899 discovery.cc:125] DistributedWorkerConfiguration: 1 1 4 localhost:38145,localhost:36391,localhost:42081,localhost:46767 36391 2,2,1
+I0000 00:00:1794314807.059192   74899 pjrt_api.cc:168] The PJRT plugin has PJRT API version 0.117. The framework PJRT API version is 0.116.
+[W1110 12:46:47.832993405 env_vars.h:405] Warning: <TorchTpu/ApiStage/ExperimentalApi/> the TORCH_TPU_SLICEBUILDER_ADDRESSES environment variable is an experimental feature and may change or be removed without notice. (function operator())
+[W1110 12:46:47.833034805 env_vars.h:405] Warning: <TorchTpu/ApiStage/ExperimentalApi/> the TORCH_TPU_TOPOLOGY environment variable is an experimental feature and may change or be removed without notice. (function operator())
+I0000 00:00:1794314807.090384   74901 discovery.cc:125] DistributedWorkerConfiguration: 3 3 4 localhost:38145,localhost:36391,localhost:42081,localhost:46767 46767 2,2,1
+I0000 00:00:1794314807.090421   74901 pjrt_api.cc:168] The PJRT plugin has PJRT API version 0.117. The framework PJRT API version is 0.116.
+[W1110 12:46:47.840137655 env_vars.h:405] Warning: <TorchTpu/ApiStage/ExperimentalApi/> the TORCH_TPU_SLICEBUILDER_ADDRESSES environment variable is an experimental feature and may change or be removed without notice. (function operator())
+[W1110 12:46:47.840166255 env_vars.h:405] Warning: <TorchTpu/ApiStage/ExperimentalApi/> the TORCH_TPU_TOPOLOGY environment variable is an experimental feature and may change or be removed without notice. (function operator())
+I0000 00:00:1794314807.097515   74898 discovery.cc:125] DistributedWorkerConfiguration: 0 0 4 localhost:38145,localhost:36391,localhost:42081,localhost:46767 38145 2,2,1
+I0000 00:00:1794314807.097552   74898 pjrt_api.cc:168] The PJRT plugin has PJRT API version 0.117. The framework PJRT API version is 0.116.
+[W1110 12:46:47.429669984 env_vars.h:405] Warning: <TorchTpu/ApiStage/ExperimentalApi/> the TORCH_TPU_SLICEBUILDER_ADDRESSES environment variable is an experimental feature and may change or be removed without notice. (function operator())
+[W1110 12:46:47.429699884 env_vars.h:405] Warning: <TorchTpu/ApiStage/ExperimentalApi/> the TORCH_TPU_TOPOLOGY environment variable is an experimental feature and may change or be removed without notice. (function operator())
+I0000 00:00:1794314807.687049   74900 discovery.cc:125] DistributedWorkerConfiguration: 2 2 4 localhost:38145,localhost:36391,localhost:42081,localhost:46767 42081 2,2,1
+I0000 00:00:1794314807.687087   74900 pjrt_api.cc:168] The PJRT plugin has PJRT API version 0.117. The framework PJRT API version is 0.116.
+I0000 00:00:1794314811.793382   74901 pjrt_c_api_client.cc:187] PjRtCApiClient created.
+I0000 00:00:1794314811.795378   74900 pjrt_c_api_client.cc:187] PjRtCApiClient created.
+I0000 00:00:1794314811.802676   74899 pjrt_c_api_client.cc:187] PjRtCApiClient created.
+I0000 00:00:1794314811.899594   74898 pjrt_c_api_client.cc:187] PjRtCApiClient created.
+Loading weights:   0%|          | 0/1013 [00:00<?, ?it/s]Loading weights:   0%|          | 0/1013 [00:00<?, ?it/s]Loading weights:   0%|          | 0/1013 [00:00<?, ?it/s]Loading weights:  92%|█████████▏| 933/1013 [00:00<00:00, 9318.57it/s]Loading weights: 100%|██████████| 1013/1013 [00:00<00:00, 9354.08it/s]
+Loading weights:   0%|          | 0/1013 [00:00<?, ?it/s]Loading weights:  87%|████████▋ | 882/1013 [00:00<00:00, 8815.76it/s]Loading weights:  88%|████████▊ | 890/1013 [00:00<00:00, 8891.11it/s]Loading weights: 100%|██████████| 1013/1013 [00:00<00:00, 9090.31it/s]
+Loading weights: 100%|██████████| 1013/1013 [00:00<00:00, 8918.66it/s]
+W0000 00:00:1794314812.263249   74901 process_group_tpu.cc:1299] Node-local store disabled: LOCAL_RANK or TORCH_TPU_DEVICES_PER_HOST is unset (local_rank=3 devices_per_host=unset world_size=4). Every rank will publish to the world store individually, which is slower at scale.
+W0000 00:00:1794314812.274604   74899 process_group_tpu.cc:1299] Node-local store disabled: LOCAL_RANK or TORCH_TPU_DEVICES_PER_HOST is unset (local_rank=1 devices_per_host=unset world_size=4). Every rank will publish to the world store individually, which is slower at scale.
+W0000 00:00:1794314812.274624   74900 process_group_tpu.cc:1299] Node-local store disabled: LOCAL_RANK or TORCH_TPU_DEVICES_PER_HOST is unset (local_rank=2 devices_per_host=unset world_size=4). Every rank will publish to the world store individually, which is slower at scale.
+Loading weights:  92%|█████████▏| 933/1013 [00:00<00:00, 9324.74it/s]Loading weights: 100%|██████████| 1013/1013 [00:00<00:00, 9331.42it/s]
+W0000 00:00:1794314812.359824   74898 process_group_tpu.cc:1299] Node-local store disabled: LOCAL_RANK or TORCH_TPU_DEVICES_PER_HOST is unset (local_rank=0 devices_per_host=unset world_size=4). Every rank will publish to the world store individually, which is slower at scale.
+I0000 00:00:1794314812.360021   74898 process_group_tpu.cc:1269] AllGatherViaNodeLocalStore(world_topo:0:4): gathered 4 entries from 4 nodes in 0 ms
+/opt/dgemma/repo/dgemma_tpu/ar_baseline.py:114: UserWarning: <TorchTpu/ApiStage/ExperimentalApi/> spmd_safe is experimental and subject to change: torch.tpu.distributed.spmd_safe is experimental and subject to change.
+  self._prefill = torch.compile(decorate(self._prefill_impl), backend=compile_backend, **options)
+I0000 00:00:1794314828.646021   76287 compilation_cache_utils.cc:218] Tier-3 compilation cache root directory: /opt/tpu-compile-cache
+I0000 00:00:1794314828.646056   76287 tier2_compilation_cache.cc:72] Tier-2 compilation cache is enabled with name 'default' because tier-3 is enabled.
+I0000 00:00:1794314828.646061   76287 tier3_compilation_cache.cc:57] Backup compilation for tier-3 cache read is enabled by default.
+I0000 00:00:1794314828.653949   76876 compilation_cache_utils.cc:99] Tier-2 cache uses TorchTPU binary fingerprint: db58e6e353078fff
+  based on TorchTPU binary version 5 and PjRt version:
+TFRT TPU v6 lite
+Built on Nov 5 2026 01:07:28 (1793869648) cl/1014260217
+C API version: 0.117
+I0000 00:00:1794314828.654082   76876 tier3_compilation_cache.cc:84] Tier-3 compilation cache path for this process: /opt/tpu-compile-cache/db58e6e353078fff
+[rank0]:[W1110 12:47:08.631232410 env_vars.h:405] Warning: <TorchTpu/ApiStage/ExperimentalApi/> the TORCH_TPU_TIER3_COMPILATION_CACHE_ROOT environment variable is an experimental feature and may change or be removed without notice. (function operator())
+/opt/dgemma/repo/dgemma_tpu/ar_baseline.py:114: UserWarning: <TorchTpu/ApiStage/ExperimentalApi/> spmd_safe is experimental and subject to change: torch.tpu.distributed.spmd_safe is experimental and subject to change.
+  self._prefill = torch.compile(decorate(self._prefill_impl), backend=compile_backend, **options)
+I0000 00:00:1794314829.336414   76242 compilation_cache_utils.cc:218] Tier-3 compilation cache root directory: /opt/tpu-compile-cache
+I0000 00:00:1794314829.336454   76242 tier2_compilation_cache.cc:72] Tier-2 compilation cache is enabled with name 'default' because tier-3 is enabled.
+I0000 00:00:1794314829.336459   76242 tier3_compilation_cache.cc:57] Backup compilation for tier-3 cache read is enabled by default.
+I0000 00:00:1794314829.343908   77549 compilation_cache_utils.cc:99] Tier-2 cache uses TorchTPU binary fingerprint: db58e6e353078fff
+  based on TorchTPU binary version 5 and PjRt version:
+TFRT TPU v6 lite
+Built on Nov 5 2026 01:07:28 (1793869648) cl/1014260217
+C API version: 0.117
+[rank3]:[W1110 12:47:09.123310497 env_vars.h:405] Warning: <TorchTpu/ApiStage/ExperimentalApi/> the TORCH_TPU_TIER3_COMPILATION_CACHE_ROOT environment variable is an experimental feature and may change or be removed without notice. (function operator())
+/opt/dgemma/repo/dgemma_tpu/ar_baseline.py:114: UserWarning: <TorchTpu/ApiStage/ExperimentalApi/> spmd_safe is experimental and subject to change: torch.tpu.distributed.spmd_safe is experimental and subject to change.
+  self._prefill = torch.compile(decorate(self._prefill_impl), backend=compile_backend, **options)
+I0000 00:00:1794314829.628718   76268 compilation_cache_utils.cc:218] Tier-3 compilation cache root directory: /opt/tpu-compile-cache
+I0000 00:00:1794314829.628763   76268 tier2_compilation_cache.cc:72] Tier-2 compilation cache is enabled with name 'default' because tier-3 is enabled.
+I0000 00:00:1794314829.628768   76268 tier3_compilation_cache.cc:57] Backup compilation for tier-3 cache read is enabled by default.
+I0000 00:00:1794314829.636415   78178 compilation_cache_utils.cc:99] Tier-2 cache uses TorchTPU binary fingerprint: db58e6e353078fff
+  based on TorchTPU binary version 5 and PjRt version:
+TFRT TPU v6 lite
+Built on Nov 5 2026 01:07:28 (1793869648) cl/1014260217
+C API version: 0.117
+[rank1]:[W1110 12:47:09.407593100 env_vars.h:405] Warning: <TorchTpu/ApiStage/ExperimentalApi/> the TORCH_TPU_TIER3_COMPILATION_CACHE_ROOT environment variable is an experimental feature and may change or be removed without notice. (function operator())
+/opt/dgemma/repo/dgemma_tpu/ar_baseline.py:114: UserWarning: <TorchTpu/ApiStage/ExperimentalApi/> spmd_safe is experimental and subject to change: torch.tpu.distributed.spmd_safe is experimental and subject to change.
+  self._prefill = torch.compile(decorate(self._prefill_impl), backend=compile_backend, **options)
+I0000 00:00:1794314830.614434   76250 compilation_cache_utils.cc:218] Tier-3 compilation cache root directory: /opt/tpu-compile-cache
+I0000 00:00:1794314830.614470   76250 tier2_compilation_cache.cc:72] Tier-2 compilation cache is enabled with name 'default' because tier-3 is enabled.
+I0000 00:00:1794314830.614475   76250 tier3_compilation_cache.cc:57] Backup compilation for tier-3 cache read is enabled by default.
+I0000 00:00:1794314830.621882   78811 compilation_cache_utils.cc:99] Tier-2 cache uses TorchTPU binary fingerprint: db58e6e353078fff
+  based on TorchTPU binary version 5 and PjRt version:
+TFRT TPU v6 lite
+Built on Nov 5 2026 01:07:28 (1793869648) cl/1014260217
+C API version: 0.117
+[rank2]:[W1110 12:47:10.393024213 env_vars.h:405] Warning: <TorchTpu/ApiStage/ExperimentalApi/> the TORCH_TPU_TIER3_COMPILATION_CACHE_ROOT environment variable is an experimental feature and may change or be removed without notice. (function operator())
