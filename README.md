@@ -43,22 +43,53 @@ checks (`tests/test_static_graphs.py`).
 
 ## Four-chip results (TPU v6e-4, released weights)
 
-The released 26B model is 48 GiB in bf16 and one v6e chip has 32 GB, so it runs as four processes, one per chip.
+The released 26B models are 48 GiB in bf16 and one v6e chip has 32 GB, so each runs as four processes, one per chip.
 Every expert is sliced along its intermediate dimension, each chip computes its slice, and one all-reduce per layer
 adds the partial outputs (`dgemma_tpu/dist.py`). Everything else is replicated. Each chip holds about 17 GiB.
 
-DiffusionGemma, static sampler, chat prompts, 512 new tokens, adaptive stopping checked every 4 steps:
+Both models use the same cache, the same stopping policy, the same expert selection and the same eight chat prompts.
+512 new tokens, bf16, median of three runs after two warmup runs, tokens per second excluding prefill
+(`results/session2`).
 
-| Batch | Tokens per second | Time per denoising step | Steps for two canvases | Tokens per forward pass |
-|---|---|---|---|---|
-| 1 | 861 | 21.2 ms | 28 | 21.3 |
-| 4 | 720 | 49.8 ms | 56 | 10.2 to 19.7 per sequence |
+| Batch | Gemma 4, autoregressive | DiffusionGemma, block diffusion | Diffusion / autoregressive |
+|---|---|---|---|
+| 1 | 165 tok/s (6.1 ms per token) | 859 tok/s (21.3 ms per step, 28 steps) | 5.2x |
+| 2 | 260 tok/s | 732 tok/s | 2.8x |
+| 4 | 268 tok/s | 718 tok/s | 2.7x |
+| 8 | 294 tok/s | 388 tok/s | 1.3x |
+| 16 | 357 tok/s | 329 tok/s | 0.9x |
 
-At batch 1 the first compiled call takes 88 s and later calls 0.61 s for 512 tokens. In a batch every sequence keeps
-stepping until the slowest one settles, which is why batch 4 runs 56 steps where batch 1 runs 28.
+At batch 1 block diffusion is 5.2 times faster than autoregressive decoding of the model it was fine-tuned from, on
+the same chips. The advantage shrinks as the batch grows and is gone by batch 16. Two things drive that. A denoising
+step already carries 256 tokens per sequence, so there is little idle hardware left for a batch to use, and every
+sequence in a batch keeps stepping until the slowest one settles (56 steps at batch 4 against 28 at batch 1).
+Batch 32 of diffusion does not compile within 32 GB per chip.
 
-These numbers come from a Spot VM that was preempted after 11 minutes (`results/session2_preempted`); the
-autoregressive baseline on the same four chips is the next run.
+The DiffusionGemma report measures 1,479 tokens per second on one H100 in FP8, nearly 5 times Gemma 4 with
+multi-token speculative decoding at batch 1, and places the crossover at around 32 concurrent requests.
+
+### Quality
+
+| Model | GSM8K, first 50 test problems, thinking disabled |
+|---|---|
+| Gemma 4, static autoregressive decoder | 96% |
+| DiffusionGemma, static block-diffusion sampler | 96% |
+
+The report gives 96.4% and 95.8% on the full set.
+
+### What the expert implementation and stop check are worth, batch 1
+
+| Configuration | Gemma 4 | DiffusionGemma |
+|---|---|---|
+| Experts chosen by token count | 165 tok/s | 859 tok/s |
+| Transformers default experts (`grouped_mm`) | 33 tok/s | 420 tok/s |
+| Stop check after every step | | 803 tok/s |
+| No adaptive stopping (48 steps per canvas) | | 274 tok/s |
+
+With the default experts the same comparison would read 12.7x instead of 5.2x. The default hurts single-token
+decoding five times more than it hurts a 256-token step.
+
+The first call of each configuration compiles for 80 to 100 seconds; later calls reuse the programs.
 
 ## Single-chip results (TPU v6e, one chip)
 
