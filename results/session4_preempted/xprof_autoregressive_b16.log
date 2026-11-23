@@ -1,0 +1,35 @@
+/opt/dgemma/venv/lib/python3.12/site-packages/torch_tpu/__init__.py:37: UserWarning: <TorchTpu/Performance/TcMalloc/> tcmalloc is not loaded; TorchTPU host performance may be degraded due to glibc ptmalloc contention. Preload libtcmalloc before starting Python (e.g. LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libtcmalloc_minimal.so.4), or set PYTHONWARNINGS="ignore:<TorchTpu/Performance/TcMalloc/" to suppress this warning.
+  _tcmalloc_check.check_tcmalloc()
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1794317572.005253    4335 pjrt_api.cc:119] GetPjrtApi was found for TPU at /opt/dgemma/venv/lib/python3.12/site-packages/libtpu/libtpu.so
+I0000 00:00:1794317573.096199    4335 device_rt.cc:166] PjRt runtime initialization deferred for tpu
+Successfully renamed PrivateUse1 backend to 'tpu'. Device: device(type='tpu')
+Registered Python module for 'tpu'.
+Device type: tpu, Device index: default
+Initializing TPU distributed runtime
+I0000 00:00:1794317573.098850    4335 libtpu_version.cc:63] Setting libtpu version to: 0.0.52
+I0000 00:00:1794317628.430395    4335 pjrt_api.cc:168] The PJRT plugin has PJRT API version 0.117. The framework PJRT API version is 0.116.
+I0000 00:00:1794317629.664133    4335 pjrt_c_api_client.cc:187] PjRtCApiClient created.
+I0000 00:00:1794317633.660298    4585 compilation_cache_utils.cc:218] Tier-3 compilation cache root directory: 
+I0000 00:00:1794317633.660329    4585 tier2_compilation_cache.cc:80] Tier-2 compilation cache is disabled for world size 1.
+I0000 00:00:1794317633.660334    4585 tier3_compilation_cache.cc:50] Backup compilation for tier-3 cache read is disabled as tier-3 cache is disabled.
+/opt/dgemma/repo/bench/xprof_capture.py:54: UserWarning: <TorchTpu/ApiStage/ExperimentalApi/> TpuProfilerConfig is experimental and subject to change: torch.tpu.profiler.TpuProfilerConfig is experimental and subject to change.
+  profiler_kwargs["experimental_config"] = TpuProfilerConfig()
+USDT:2026-11-10 13:34:24 4335:4335 SyncActivityProfilerHandler.cpp:39] profiler_start
+I0000 00:00:1794317664.832071    4335 profiler_session.cc:171] Profiler session initializing.
+I0000 00:00:1794317664.832089    4335 profiler_session.cc:186] Profiler session started.
+I0000 00:00:1794317664.853784    4335 tpu_profiler_plugin.cc:448] Successfully created Tpu ProfilerSession!
+I0000 00:00:1794317665.206680    4335 profiler_session.cc:134] Profiler session collecting data.
+I0000 00:00:1794317666.079374    4335 tpu_profiler_plugin.cc:501] TpuKinetoProfilerSession::stop() CollectData status: OK
+I0000 00:00:1794317666.079444    4335 tpu_profiler_plugin.cc:503] TpuKinetoProfilerSession::stop() Collected XSpace planes: 7
+I0000 00:00:1794317666.114468    4335 tpu_profiler_plugin.cc:543] Successfully wrote XPlane to /tmp/plugins/profile/2026_11_10_13_34_26/dgemma-s4.xplane.pb
+I0000 00:00:1794317666.114496    4335 profiler_session.cc:217] Profiler session tear down.
+USDT:2026-11-10 13:34:26 4335:4335 SyncActivityProfilerHandler.cpp:46] profiler_stop
+[W1110 13:34:26.706496435 collection.cpp:1188] Warning: Detected an event which was likely passed to kineto by the PyTorch profiler, but is not present in the set of known events: PJRT_LoadedExecutable_Execute This most likely means that Kineto has not maintained address stability for this event. Please report this to the PyTorch team. (function operator())
+trace written to /opt/dgemma/repo/results/session4/xprof_autoregressive_b16
+I0000 00:00:1794317667.627686    4335 compilation_cache.cc:356] Compilation cache evicted.
+I0000 00:00:1794317667.627754    4335 compilation_cache.cc:203] CompilationCache final stats: num_cache_reqs=38
+num_cache_hits=24 {63.1%}
+num_compilations=14
+peak_compilation_memory_bytes=unknown
+

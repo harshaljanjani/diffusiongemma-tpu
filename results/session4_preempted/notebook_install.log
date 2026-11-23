@@ -1,0 +1,66 @@
+Using Python 3.12.16 environment at: /opt/dgemma/venv
+Resolved 58 packages in 356ms
+Downloading fonttools (5.2MiB)
+Downloading matplotlib (9.4MiB)
+Downloading kiwisolver (1.4MiB)
+Downloading jedi (4.7MiB)
+Downloading debugpy (3.8MiB)
+ Downloaded kiwisolver
+ Downloaded debugpy
+ Downloaded fonttools
+ Downloaded matplotlib
+ Downloaded jedi
+Prepared 45 packages in 350ms
+Installed 45 packages in 130ms
+ + asttokens==3.0.2
+ + beautifulsoup4==4.15.0
+ + bleach==6.4.0
+ + comm==0.2.3
+ + contourpy==1.4.0
+ + cycler==0.12.1
+ + debugpy==1.8.22
+ + defusedxml==0.7.1
+ + executing==2.3.0
+ + fastjsonschema==2.22.3
+ + fonttools==4.68.0
+ + ipykernel==7.4.0
+ + ipython==9.18.1
+ + ipython-pygments-lexers==1.1.1
+ + jedi==0.20.1
+ + jsonschema==4.26.0
+ + jsonschema-specifications==2025.9.1
+ + jupyter-client==8.10.0
+ + jupyter-core==5.9.1
+ + jupyterlab-pygments==0.3.0
+ + kiwisolver==1.5.1
+ + matplotlib==3.11.2
+ + matplotlib-inline==0.2.2
+ + mistune==3.4.0
+ + nbclient==0.11.0
+ + nbconvert==7.17.2
+ + nbformat==5.11.1
+ + nest-asyncio2==1.7.4
+ + pandocfilters==1.5.1
+ + parso==0.8.7
+ + pexpect==4.9.0
+ + platformdirs==4.14.5
+ + prompt-toolkit==3.0.53
+ + ptyprocess==0.7.0
+ + pure-eval==0.2.4
+ + pyparsing==3.3.3
+ + referencing==0.37.0
+ + rpds-py==2026.9.1
+ + soupsieve==4.1
+ + stack-data==0.6.3
+ + tinycss2==1.5.1
+ + tornado==6.6.1
+ + traitlets==5.16.1
+ + wcwidth==0.9.4
+ + webencodings==0.6.1
+Using Python 3.12.16 environment at: /opt/dgemma/venv
+Resolved 41 packages in 6ms
+   Building dgemma-tpu @ file:///opt/dgemma/repo
+      Built dgemma-tpu @ file:///opt/dgemma/repo
+Prepared 1 package in 719ms
+Installed 1 package in 0.79ms
+ + dgemma-tpu==0.1.0 (from file:///opt/dgemma/repo)
