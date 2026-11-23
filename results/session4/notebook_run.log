@@ -1,0 +1,11 @@
+[NbConvertApp] Converting notebook rebuilding_diffusiongemma_sampler_tpu.input.ipynb to notebook
+[IPKernelApp] WARNING | Kernel is running over TCP without encryption. All communication (including code and outputs) is sent in plain text and is susceptible to eavesdropping. Use IPC transport or launch with kernel manager-provisioned CurveZMQ keys to enable transport encryption.
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1794320092.546073    3833 pjrt_api.cc:119] GetPjrtApi was found for TPU at /opt/dgemma/venv/lib/python3.12/site-packages/libtpu/libtpu.so
+I0000 00:00:1794320093.578973    3833 device_rt.cc:166] PjRt runtime initialization deferred for tpu
+I0000 00:00:1794320093.581930    3833 libtpu_version.cc:63] Setting libtpu version to: 0.0.52
+I0000 00:00:1794320096.216954    3833 pjrt_api.cc:168] The PJRT plugin has PJRT API version 0.117. The framework PJRT API version is 0.116.
+I0000 00:00:1794320097.421774    3833 pjrt_c_api_client.cc:187] PjRtCApiClient created.
+I0000 00:00:1794320151.653819    4161 compilation_cache_utils.cc:218] Tier-3 compilation cache root directory: 
+I0000 00:00:1794320151.653844    4161 tier2_compilation_cache.cc:80] Tier-2 compilation cache is disabled for world size 1.
+I0000 00:00:1794320151.653847    4161 tier3_compilation_cache.cc:50] Backup compilation for tier-3 cache read is disabled as tier-3 cache is disabled.

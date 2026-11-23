@@ -12,8 +12,9 @@ estimates from wall-clock time and exclude boot disks, which add a few cents per
 | 2, attempt 3 | 2026-11-10 11:20 to 11:30 | ct6e-standard-4t | us-east1-d | $2.82/h | 10 min | $0.47 | Autoregressive baseline; preempted while compiling |
 | 2 | 2026-11-10 11:36 to 12:47 | ct6e-standard-4t | us-central1-b | $2.82/h | 1.18 h | $3.34 | Released weights for both models: batch ladder, default-experts comparison, GSM8K, stop-check variants; preempted in the last stage |
 | 3 | 2026-11-10 13:01 to 13:16 | ct6e-standard-4t | us-east1-d | $2.82/h | 0.25 h | $0.71 | Re-run of both headline numbers with the cheaper cache path; preempted |
+| 4 | 2026-11-10 13:30 to 14:25 | ct6e-standard-1t | us-east1-d, us-central1-b | $0.70/h | 0.6 h over three VMs | $0.42 | Autoregressive XProf traces; two executions of the notebook |
 
-Running total: about $8.00.
+Running total: about $8.42.
 
 ## Spot price per v6e chip-hour by region
 

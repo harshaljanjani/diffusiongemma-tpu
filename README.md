@@ -21,6 +21,7 @@ Built for the TorchTPU Content Sprint 2026.
 | `results/` | Raw JSON-lines output and logs of every session |
 | `upstream/` | Drafted reports for Transformers and torch_tpu |
 | `tests/` | CPU tests, including token-for-token equality with the Transformers sampler |
+| `notebooks/` | A stage-by-stage walkthrough of the rewrite that runs on one TPU chip, saved with its outputs |
 
 ## Why the Transformers sampler needs rewriting for TPU
 
@@ -64,6 +65,9 @@ the same chips. The advantage shrinks as the batch grows and is gone by batch 16
 step already carries 256 tokens per sequence, so there is little idle hardware left for a batch to use, and every
 sequence in a batch keeps stepping until the slowest one settles (56 steps at batch 4 against 28 at batch 1).
 Batch 32 of diffusion does not compile within 32 GB per chip.
+
+A second VM reproduced the batch 1 numbers with the final code: 170 tok/s autoregressive and 773 tok/s diffusion,
+where the diffusion run happened to need 32 steps instead of 28 (`results/session3`).
 
 The DiffusionGemma report measures 1,479 tokens per second on one H100 in FP8, nearly 5 times Gemma 4 with
 multi-token speculative decoding at batch 1, and places the crossover at around 32 concurrent requests.
@@ -170,6 +174,7 @@ On a TPU VM created with `cloud/create_vm.sh` (its startup script installs `torc
 bash cloud/run_session1.sh     # one chip: operator coverage, execution modes, proxy models
 bash cloud/run_session1b.sh    # one chip: expert implementations for both decoders
 bash cloud/run_session2.sh     # four chips: released weights for both models
+bash cloud/run_session4.sh     # one chip: executes the notebook
 ```
 
 Costs are in `cloud/ledger.md`.
@@ -186,5 +191,9 @@ or a pointer to the raw log. None has been filed yet.
   stopping). The other Diffusers schedulers are not ported.
 - Tokens differ from a GPU run of Transformers because the random streams differ; equality is tested on CPU with
   shared noise.
+- The autoregressive baseline scales weakly with batch (165 to 357 tok/s from batch 1 to 16). An XProf trace at
+  batch 16 (`results/session4_preempted`) attributes the step to the dense expert matmuls and an offloaded gather;
+  a better small-batch expert path would move the crossover.
+- Spot v6e-4 VMs were preempted five times during this work, so the sessions were run in pieces.
 - The autoregressive baseline is plain decoding without multi-token speculative decoding, which is what the
   DiffusionGemma report compares against on GPU.
