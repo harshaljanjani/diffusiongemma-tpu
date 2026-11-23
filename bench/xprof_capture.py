@@ -4,11 +4,14 @@ import torch
 from common import DTYPES, load_model, random_prompts
 
 from dgemma_tpu import StaticBlockDiffusionGenerator
+from dgemma_tpu.ar_baseline import StaticAutoregressiveGenerator
 from dgemma_tpu.runtime import compile_backend_for, resolve_device, synchronize
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Capture an XProf trace of compiled block-diffusion decoding.")
+    parser = argparse.ArgumentParser(description="Capture an XProf trace of compiled decoding.")
+    parser.add_argument("--family", default="diffusion", choices=["diffusion", "gemma4"])
+    parser.add_argument("--experts-implementation", default=None)
     parser.add_argument("--model", default="proxy:6")
     parser.add_argument("--device", default="auto")
     parser.add_argument("--dtype", default="bfloat16", choices=sorted(DTYPES))
@@ -20,15 +23,23 @@ def main() -> None:
     args = parser.parse_args()
 
     device = resolve_device(args.device)
-    model = load_model("diffusion", args.model, device, DTYPES[args.dtype])
-    generator = StaticBlockDiffusionGenerator(
-        model,
-        max_new_tokens=args.max_new_tokens,
-        stop_check_interval=0,
-        compile_backend=compile_backend_for(device, "auto"),
-        max_denoising_steps=args.max_denoising_steps,
-        pad_token_id=0,
+    model = load_model(
+        args.family, args.model, device, DTYPES[args.dtype], experts_implementation=args.experts_implementation
     )
+    backend = compile_backend_for(device, "auto")
+    if args.family == "diffusion":
+        generator = StaticBlockDiffusionGenerator(
+            model,
+            max_new_tokens=args.max_new_tokens,
+            stop_check_interval=0,
+            compile_backend=backend,
+            max_denoising_steps=args.max_denoising_steps,
+            pad_token_id=0,
+        )
+    else:
+        generator = StaticAutoregressiveGenerator(
+            model, max_new_tokens=args.max_new_tokens, stop_check_interval=0, compile_backend=backend
+        )
     input_ids = random_prompts(args.batch_size, args.prompt_length, model.config.text_config.vocab_size, device)
     for _ in range(2):
         generator.generate(input_ids)
