@@ -1,0 +1,62 @@
+[NbConvertApp] Converting notebook rebuilding_diffusiongemma_sampler_tpu.input.ipynb to notebook
+[IPKernelApp] WARNING | Kernel is running over TCP without encryption. All communication (including code and outputs) is sent in plain text and is susceptible to eavesdropping. Use IPC transport or launch with kernel manager-provisioned CurveZMQ keys to enable transport encryption.
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1794318602.236232    3844 pjrt_api.cc:119] GetPjrtApi was found for TPU at /opt/dgemma/venv/lib/python3.12/site-packages/libtpu/libtpu.so
+I0000 00:00:1794318603.307484    3844 device_rt.cc:166] PjRt runtime initialization deferred for tpu
+I0000 00:00:1794318603.310594    3844 libtpu_version.cc:63] Setting libtpu version to: 0.0.52
+I0000 00:00:1794318605.960325    3844 pjrt_api.cc:168] The PJRT plugin has PJRT API version 0.117. The framework PJRT API version is 0.116.
+I0000 00:00:1794318607.170163    3844 pjrt_c_api_client.cc:187] PjRtCApiClient created.
+I0000 00:00:1794318662.045128    4191 compilation_cache_utils.cc:218] Tier-3 compilation cache root directory: 
+I0000 00:00:1794318662.045151    4191 tier2_compilation_cache.cc:80] Tier-2 compilation cache is disabled for world size 1.
+I0000 00:00:1794318662.045154    4191 tier3_compilation_cache.cc:50] Backup compilation for tier-3 cache read is disabled as tier-3 cache is disabled.
+I0000 00:00:1794318862.388234    3844 compilation_cache.cc:356] Compilation cache evicted.
+I0000 00:00:1794318862.388615    3844 compilation_cache.cc:203] CompilationCache final stats: num_cache_reqs=214221
+num_cache_hits=213708 {99.7%}
+num_compilations=513
+peak_compilation_memory_bytes=unknown
+
+https://symbolize.stripped_domain/r/?trace=700e5ddf6057,700f2ec4251f,700e5ddf609a,700e5d29c337,700e5d27995d,700e51aec7c6,700e51acab30,700e5dfbe189,700e51acaa46,700e51b334cd,700e50c6eac0,700e50c6ea75,700e51bd2238,700e51bd224d,700e51b134b8,700e6929e3af,700e66b47e4a,700e66b47edd,700e5ffe98be,700e5ffe9936,700e48dcae19,700e48dcaec2,700e48d89f9d,700e48d89edb,1604ead,163862a,1639ec8,1638552,1639c24,1639ec8,16ee7ad,163b652,176adb7&map= 
+*** SIGTERM received by PID 3844 (TID 3844) on cpu 0, si_code=0, from PID 3843; stack trace: ***
+PC: @     0x700e5ddf6057  (unknown)  proto2::internal::RepeatedPtrFieldBase::DestroyMessageLites()
+    @     0x700e5df58493       1888  FailureSignalHandler()
+    @     0x700f2ec42520  1411250832  (unknown)
+    @     0x700e5ddf609b         80  proto2::internal::RepeatedPtrFieldBase::DestroyMessageLites()
+    @     0x700e5d29c338         32  xla::HloProto::SharedDtor()
+    @     0x700e5d27995e         48  platforms_deepsea::jellyfish::xdb::CompilerMetadata::SharedDtor()
+    @     0x700e51aec7c7         32  std::__u::__shared_ptr_pointer[abi:f240000qn20]<>::__on_zero_shared()
+    @     0x700e51acab31         32  absl::container_internal::raw_hash_set<>::destroy_slot_fn_impl()
+    @     0x700e5dfbe18a         32  absl::container_internal::Destruct<>()
+    @     0x700e51acaa47         48  xla::TpuExecutable::~TpuExecutable()
+    @     0x700e51b334ce         32  xla::TpuExecutable::~TpuExecutable()
+    @     0x700e50c6eac1         32  std::__u::shared_ptr<>::~shared_ptr()
+    @     0x700e50c6ea76         32  tsl::AsyncValue::Destroy()
+    @     0x700e51bd2239         48  xla::CommonPjRtLoadedExecutable::~CommonPjRtLoadedExecutable()
+    @     0x700e51bd224e         32  xla::CommonPjRtLoadedExecutable::~CommonPjRtLoadedExecutable()
+    @     0x700e51b134b9         32  pjrt::PJRT_LoadedExecutable_Destroy()
+    @     0x700e6929e3b0         48  std::_Function_handler<>::_M_invoke()
+    @     0x700e66b47e4b         48  xla::PjRtCApiLoadedExecutable::~PjRtCApiLoadedExecutable()
+    @     0x700e66b47ede         32  xla::PjRtCApiLoadedExecutable::~PjRtCApiLoadedExecutable()
+    @     0x700e5ffe98bf         32  torch_tpu::LoadedExecutableWithMetadata::~LoadedExecutableWithMetadata()
+    @     0x700e5ffe9937         32  std::_Sp_counted_ptr<>::_M_dispose()
+    @     0x700e48dcae1a         48  torch_tpu::CompiledExecutableRunner::~CompiledExecutableRunner()
+    @     0x700e48dcaec3         32  pybind11::cpp_function::initialize<>()::{lambda()#2}::__invoke()
+    @     0x700e48d89f9e         64  pybind11::cpp_function::destruct()
+    @     0x700e48d89edc         32  pybind11::detail::function_record_PyTypeObject_methods::tp_dealloc_impl()
+    @          0x1604eae         48  meth_dealloc
+    @          0x163862b        128  subtype_dealloc
+    @          0x1639ec9         80  dict_dealloc
+    @          0x1638553        128  subtype_dealloc
+    @          0x1639c25         80  dict_dealloc
+    @          0x1639ec9         80  dict_dealloc
+    @          0x16ee7ae         64  subtype_clear
+    @          0x163b653        192  gc_collect_main
+    @          0x176adb8         64  PyGC_Collect
+    @          0x176b36e        384  Py_FinalizeEx
+    @          0x1787e60        208  Py_RunMain
+    @          0x1787a8f        608  pymain_main
+    @          0x17878f6         48  main
+    @     0x700f2ec29d90  (unknown)  (unknown)
+https://symbolize.stripped_domain/r/?trace=700e5ddf6057,700e5df58492,700f2ec4251f,700e5ddf609a,700e5d29c337,700e5d27995d,700e51aec7c6,700e51acab30,700e5dfbe189,700e51acaa46,700e51b334cd,700e50c6eac0,700e50c6ea75,700e51bd2238,700e51bd224d,700e51b134b8,700e6929e3af,700e66b47e4a,700e66b47edd,700e5ffe98be,700e5ffe9936,700e48dcae19,700e48dcaec2,700e48d89f9d,700e48d89edb,1604ead,163862a,1639ec8,1638552,1639c24,1639ec8,16ee7ad,163b652,176adb7,176b36d,1787e5f,1787a8e,17878f5,700f2ec29d8f&map= 
+E1110 13:54:23.541825    3844 coredump_hook.cc:250] RAW: Remote crash gathering disabled for SIGTERM.
+E1110 13:54:23.905033    3844 process_state.cc:796] RAW: Raising signal 15 with default behavior
+[NbConvertApp] Writing 160046 bytes to rebuilding_diffusiongemma_sampler_tpu.executed.ipynb

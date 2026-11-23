@@ -1,0 +1,10 @@
+=== stage notebook
+Using Python 3.12.16 environment at: /opt/dgemma/venv
+Resolved 1 package in 138ms
+Downloading pip (1.9MiB)
+ Downloaded pip
+Prepared 1 package in 78ms
+Installed 1 package in 20ms
+ + pip==26.3
+=== notebook exit=0
+=== session 4 finished

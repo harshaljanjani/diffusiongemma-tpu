@@ -30,7 +30,7 @@ done
 echo "bootstrapped at $(date -u +%H:%M:%S)"
 
 $REMOTE upload
-$REMOTE run "cd /opt/dgemma/repo && (sudo nohup bash -c 'bash cloud/run_$SESSION.sh > /opt/dgemma/$SESSION.log 2>&1; shutdown -h now' > /dev/null 2>&1 &)"
+$REMOTE run "cd /opt/dgemma/repo && (sudo nohup bash -c 'bash cloud/run_$SESSION.sh > /opt/dgemma/$SESSION.log 2>&1; cp /opt/dgemma/$SESSION.log results/$SESSION/; sleep 150; shutdown -h now' > /dev/null 2>&1 &)"
 echo "session started at $(date -u +%H:%M:%S)"
 bash "$SCRIPT_DIR/watch_results.sh" "$NAME" "/opt/dgemma/repo/results/$SESSION" "$REPO_DIR/results" 60
 $REMOTE fetch "/opt/dgemma/$SESSION.log" "$REPO_DIR/results/$SESSION" > /dev/null 2>&1
