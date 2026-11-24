@@ -1,30 +1,31 @@
-# DiffusionGemma: `cache_implementation="static"` decodes from a corrupted sliding-window cache once the context exceeds `sliding_window`
+### DiffusionGemma: `cache_implementation="static"` decodes from a corrupted sliding-window cache once the context exceeds `sliding_window`
 
-Status: draft, not filed. Target: huggingface/transformers. Checked on transformers 5.22.2, torch 2.15.0 (CPU).
+Status: draft, not filed. Target: huggingface/transformers. Checked on transformers 5.22.2, torch 2.15.0 (CPU); the
+reproduction below was last run on 2026-11-24 against the same versions.
 
-## Summary
+### Summary
 
 With `cache_implementation="static"`, `DiffusionGemmaForBlockDiffusion.generate` produces different tokens from the
 default dynamic cache as soon as the number of cached tokens exceeds `sliding_window`. Below that length the two
 caches agree token for token. For the released checkpoint (`sliding_window=1024`, `canvas_length=256`) this affects
 any request where prompt plus generated tokens goes past 1024, which is the documented path for `torch.compile`.
 
-## Cause
+### Cause
 
-`DiffusionGemmaDecoderTextAttention.append_to_cache` places the canvas keys at
+`DiffusionGemmaDecoderTextAttention.append_to_cache` (`modeling_diffusion_gemma.py`) places the canvas keys at
 `cache_layer.cumulative_length` on the static path:
 
 ```python
 cache_position_new = torch.arange(new_length, device=cache_layer.device) + cache_layer.cumulative_length
 ```
 
-`StaticSlidingWindowLayer.update` only advances that tensor while the window is not yet full. Once the layer becomes
-full it tracks the length in `cumulative_length_int` and leaves the tensor untouched ("we don't need to update it if
-we are already outside of this branch"). The decoder therefore keeps writing the canvas at the stale position, on top
-of cached tokens, and leaves zeros where the canvas is expected.
+`StaticSlidingWindowLayer.update` (`cache_utils.py`) only advances that tensor while the window is not yet full. Once
+the layer becomes full it tracks the length in `cumulative_length_int` and leaves the tensor untouched ("we don't need
+to update it if we are already outside of this branch"). The decoder therefore keeps writing the canvas at the stale
+position, on top of cached tokens, and leaves zeros where the canvas is expected.
 
-Observed on a 4-layer model with `sliding_window=24`, `canvas_length=16`, prompt length 12 (sliding layer 0, one row
-per canvas):
+Observed on a 4-layer model with `sliding_window=24`, `canvas_length=16`, prompt length 12 and four canvases (sliding
+layer 0, one row per canvas):
 
 | Canvas | Write position (`cumulative_length`) | True cached length (`cumulative_length_int`) |
 |---|---|---|
@@ -33,7 +34,7 @@ per canvas):
 | 3 | 12 | 44 |
 | 4 | 12 | 60 |
 
-## Reproduction
+### Reproduction
 
 ```python
 import torch
@@ -105,14 +106,17 @@ In a sweep over prompt lengths 5, 12 and 40 and windows 8, 24 and 512, the first
 falls in the first canvas decoded after the cached length passes the window. Models with only full-attention layers
 never diverge.
 
-## Related
+### Related
 
-- #49542 makes the sliding-window counter a tensor for autoregressive decode; it may fix this as a side effect.
-- The same layer keeps its length in a Python int, which Dynamo guards on (`layers[0].cumulative_length_int == 28`),
-  so the compiled encoder step recompiles once per canvas.
+Pull request #49542, open at the time of writing, makes the sliding-window counters tensors and right-aligns the static
+sliding cache for autoregressive decode; it may fix this as a side effect.
 
-## How this repository avoids it
+The same layer keeps its length in a Python int, which Dynamo guards on (`layers[0].cumulative_length_int == 28`), so
+the compiled encoder step recompiles once per canvas.
 
-`dgemma_tpu.cache.BlockDiffusionStaticCache` keeps sliding layers right-aligned in a fixed window, appends with a
-concatenate-and-trim, and tracks validity in device tensors. Its output is token-identical to the dynamic cache in
-`tests/test_equivalence.py`, including past the window.
+### How this repository avoids it
+
+`dgemma_tpu.cache.BlockDiffusionStaticCache` keeps sliding layers right-aligned in a fixed window of `sliding_window - 1`
+tokens, appends with a concatenate-and-trim (`SlidingAttentionLayer.update`), and tracks validity in device tensors.
+Its output is token-identical to the dynamic cache in `tests/test_equivalence.py`, which generates 64 tokens with
+windows of 8, 24 and 512, so the window is passed in two of the three cases.

@@ -1,22 +1,27 @@
-# Compute ledger
+### Compute ledger
 
-Budget: $50. Prices are Spot rates per chip-hour from the Cloud Billing catalog on 2026-11-10; totals are
-estimates from wall-clock time and exclude boot disks, which add a few cents per session.
+Budget $50. Rates are Spot prices from the Cloud Billing catalog on 2026-11-10, per VM hour (one chip for
+`ct6e-standard-1t`, four for `ct6e-standard-4t`). Estimates come from wall-clock time and exclude boot disks, which
+add a few cents per session.
 
 | Session | Date (UTC) | Machine | Zone | Rate | Duration | Estimate | Purpose |
 |---|---|---|---|---|---|---|---|
 | Probe | 2026-11-10 06:50 | ct6e-standard-1t | europe-west4-a | $1.78/h | 2 min | $0.06 | Quota and capacity check |
-| 1 | 2026-11-10 07:53 to 09:26 | ct6e-standard-1t | europe-west4-a | $1.78/h | 1.55 h | $2.76 | Single-chip study: operator coverage, execution modes, expert implementations, proxy models |
+| 1 | 2026-11-10 07:53 to 09:26 | ct6e-standard-1t | europe-west4-a | $1.78/h | 1.55 h | $2.76 | Single-chip study on one VM (`results/session1`, `session1b`, `session1c`): operator coverage, execution modes, expert implementations, proxy models |
 | 2, attempt 1 | 2026-11-10 09:48 to 09:51 | ct6e-standard-4t | us-east1-d | $2.82/h | 3 min | $0.14 | Preempted during bootstrap |
-| 2, attempt 2 | 2026-11-10 10:00 to 10:11 | ct6e-standard-4t | us-east1-d | $2.82/h | 11 min | $0.52 | Released DiffusionGemma on four chips at batch 1 and 4, then preempted |
-| 2, attempt 3 | 2026-11-10 11:20 to 11:30 | ct6e-standard-4t | us-east1-d | $2.82/h | 10 min | $0.47 | Autoregressive baseline; preempted while compiling |
+| 2, attempt 2 | 2026-11-10 10:00 to 10:11 | ct6e-standard-4t | us-east1-d | $2.82/h | 11 min | $0.52 | Released DiffusionGemma on four chips at batch 1 and 4, then preempted (`results/session2_preempted`) |
+| 2, attempt 3 | 2026-11-10 11:20 to 11:30 | ct6e-standard-4t | us-east1-d | $2.82/h | 10 min | $0.47 | Autoregressive baseline; preempted while compiling (`results/session2_ar`) |
 | 2 | 2026-11-10 11:36 to 12:47 | ct6e-standard-4t | us-central1-b | $2.82/h | 1.18 h | $3.34 | Released weights for both models: batch ladder, default-experts comparison, GSM8K, stop-check variants; preempted in the last stage |
 | 3 | 2026-11-10 13:01 to 13:16 | ct6e-standard-4t | us-east1-d | $2.82/h | 0.25 h | $0.71 | Re-run of both headline numbers with the cheaper cache path; preempted |
-| 4 | 2026-11-10 13:30 to 14:25 | ct6e-standard-1t | us-east1-d, us-central1-b | $0.70/h | 0.6 h over three VMs | $0.42 | Autoregressive XProf traces; two executions of the notebook |
+| 4 | 2026-11-10 13:30 to 14:25 | ct6e-standard-1t | us-east1-d, us-central1-b | $0.70/h | 0.6 h over three VMs | $0.42 | Autoregressive XProf traces (`results/session4_preempted`); two executions of the notebook (`results/session4_first_run`, `results/session4`) |
 
 Running total: about $8.42.
 
-## Spot price per v6e chip-hour by region
+The timestamps written into `results/*/results.jsonl` and the executed notebooks fall inside these windows: session 1
+from 08:00 to 09:25, session 2 from 11:45 to 12:47, session 3 from 13:08 to 13:12, the session 4 traces at 13:32 and
+the notebook executions at 13:50 and 14:15.
+
+### Spot price per v6e chip-hour by region
 
 | Region | Spot | On-demand |
 |---|---|---|
