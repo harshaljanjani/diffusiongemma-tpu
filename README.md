@@ -1,4 +1,4 @@
-# DiffusionGemma on TorchTPU
+### DiffusionGemma on TorchTPU
 
 Static-shape block-diffusion decoding for [DiffusionGemma](https://huggingface.co/google/diffusiongemma-26B-A4B-it)
 in native PyTorch on Cloud TPU v6e with [TorchTPU](https://github.com/google-pytorch/torch_tpu), and a like-for-like
@@ -7,7 +7,7 @@ was fine-tuned from.
 
 Built for the TorchTPU Content Sprint 2026.
 
-## What is in the repository
+### What is in the repository
 
 | Path | Contents |
 |---|---|
@@ -23,7 +23,7 @@ Built for the TorchTPU Content Sprint 2026.
 | `tests/` | CPU tests, including token-for-token equality with the Transformers sampler |
 | `notebooks/` | A stage-by-stage walkthrough of the rewrite that runs on one TPU chip, saved with its outputs |
 
-## Why the Transformers sampler needs rewriting for TPU
+### Why the Transformers sampler needs rewriting for TPU
 
 `DiffusionGemmaForBlockDiffusion.generate` in Transformers 5.22.2 was written around CUDA graphs. On TPU:
 
@@ -34,7 +34,7 @@ Built for the TorchTPU Content Sprint 2026.
 | Self-conditioning logits are `None` on the first step | Two graphs for one step function | Zero soft embeddings on the first step |
 | `(batch, 256, 262144)` logits carried between steps, softmax recomputed in the decoder | Large tensor crosses the step boundary; four normalizations per step | Carries `(batch, 256, 2816)` soft embeddings; one `log_softmax` feeds sampling, entropy and self-conditioning |
 | `torch.cat` grows the sequence and masks per canvas; boolean-mask assignment when finalizing | New shapes per canvas | Preallocated buffers, `index_copy_` at a device-side length, `torch.where` |
-| Static sliding-window cache keeps its length in a Python int | Guard on the int recompiles the encoder per canvas; decoder reads a corrupted window past 1024 tokens | Right-aligned window buffer with validity tracked in tensors |
+| Static sliding-window cache keeps its length in a Python int | Guard on the int recompiles the encoder per canvas; decoder reads a corrupted window once the cache outgrows the sliding window (shown on a tiny model with a 24-token window, not run at the released 1024) | Right-aligned window buffer with validity tracked in tensors |
 | Default `grouped_mm` experts | About 3 ms per layer regardless of token count | Implementation chosen by token count |
 | `model.to("tpu")` | Encoder and decoder weights become two copies | Each distinct parameter is moved once |
 
@@ -42,7 +42,7 @@ On CPU the rewritten sampler produces the same tokens as the Transformers dynami
 the same noise (`tests/test_equivalence.py`), compiles each stage exactly once and syncs with the host only at stop
 checks (`tests/test_static_graphs.py`).
 
-## Four-chip results (TPU v6e-4, released weights)
+### Four-chip results (TPU v6e-4, released weights)
 
 The released 26B models are 48 GiB in bf16 and one v6e chip has 32 GB, so each runs as four processes, one per chip.
 Every expert is sliced along its intermediate dimension, each chip computes its slice, and one all-reduce per layer
@@ -61,16 +61,21 @@ Both models use the same cache, the same stopping policy, the same expert select
 | 16 | 357 tok/s | 329 tok/s | 0.9x |
 
 At batch 1 block diffusion is 5.2 times faster than autoregressive decoding of the model it was fine-tuned from, on
-the same chips. The advantage shrinks as the batch grows and is gone by batch 16. Two things drive that. A denoising
+the same chips. The advantage shrinks as the batch grows and was gone by batch 16 in this run. Two things drive that. A denoising
 step already carries 256 tokens per sequence, so there is little idle hardware left for a batch to use, and every
 sequence in a batch keeps stepping until the slowest one settles (56 steps at batch 4 against 28 at batch 1).
 Batch 32 of diffusion does not compile within 32 GB per chip.
 
-A second VM reproduced the batch 1 numbers with the final code: 170 tok/s autoregressive and 773 tok/s diffusion,
-where the diffusion run happened to need 32 steps instead of 28 (`results/session3`).
+The batch 8 and 16 diffusion rows predate the commit that scales the dense-experts limit by the number of chips.
+At those sizes the code now on `main` selects the dense expert path where this run used `grouped_mm`, and that
+has not been measured, so the crossover point may differ.
 
-The DiffusionGemma report measures 1,479 tokens per second on one H100 in FP8, nearly 5 times Gemma 4 with
-multi-token speculative decoding at batch 1, and places the crossover at around 32 concurrent requests.
+A second VM re-measured batch 1 with later code and two timed runs instead of three: 170 tok/s autoregressive and
+773 tok/s diffusion, a ratio of 4.5x. The diffusion run needed 32 steps instead of 28 (`results/session3`).
+
+For reference, and not measured here, the [DiffusionGemma report](https://arxiv.org/abs/2608.00146) gives 1,479
+tokens per second on one H100 in FP8, nearly 5 times Gemma 4 with multi-token speculative decoding at batch 1, and
+places the crossover at around 32 concurrent requests.
 
 ### Quality
 
@@ -79,7 +84,7 @@ multi-token speculative decoding at batch 1, and places the crossover at around 
 | Gemma 4, static autoregressive decoder | 96% |
 | DiffusionGemma, static block-diffusion sampler | 96% |
 
-The report gives 96.4% and 95.8% on the full set.
+The report gives 96.4% and 95.8% on the full set; a 50-problem sample cannot resolve a difference that small.
 
 ### What the expert implementation and stop check are worth, batch 1
 
@@ -90,12 +95,13 @@ The report gives 96.4% and 95.8% on the full set.
 | Stop check after every step | | 803 tok/s |
 | No adaptive stopping (48 steps per canvas) | | 274 tok/s |
 
-With the default experts the same comparison would read 12.7x instead of 5.2x. The default hurts single-token
-decoding five times more than it hurts a 256-token step.
+With the default experts the same comparison would read 12.7x instead of 5.2x. The default slows single-token
+decoding 5.0 times and a 256-token step 2.0 times.
 
-The first call of each configuration compiles for 80 to 100 seconds; later calls reuse the programs.
+The first call of a configuration includes compilation: 64 to 115 seconds for most configurations, and 214 to 300
+seconds for the default experts and for diffusion at batch 8 and 16. Later calls reuse the programs.
 
-## Single-chip results (TPU v6e, one chip)
+### Single-chip results (TPU v6e, one chip)
 
 These runs use a randomly initialized model with the released width, vocabulary, expert count and canvas length but
 6 of the 30 layers, so that it fits one 32 GB chip. They isolate per-step costs; they say nothing about text quality.
@@ -109,7 +115,7 @@ Prompt length 200, bf16, 512 new tokens for diffusion and 256 for autoregressive
 | DeferAndFuse (`TORCH_TPU_DEFER_AND_FUSE=1`) | 40.7 ms |
 | `torch.compile(backend="tpu")`, default experts | 26.2 ms |
 | `torch.compile(backend="tpu")`, experts chosen by token count | 15.9 ms |
-| Transformers sampler, dynamic cache, uncompiled | 9.11 s per 512 tokens, against 1.40 s for the row above |
+| Transformers sampler, dynamic cache, uncompiled, default experts | 9.11 s per 512 tokens, against 2.54 s for the compiled static sampler with default experts |
 | Transformers sampler, static cache, compiled | fails: `mode='reduce-overhead'` is not accepted |
 
 Checking for early stopping after every step instead of never changes the step time from 25.7 ms to 27.0 ms.
@@ -129,7 +135,8 @@ Checking for early stopping after every step instead of never changes the step t
 The default costs about 3 ms whether it processes one token or 256. An XProf trace
 (`results/session1/xprof_denoise_proxy6_grouped_mm.trace.json.gz`) shows a copy of the full
 `bf16[128,1408,2816]` expert tensor and offloaded gathers on every step. `dgemma_tpu.moe` picks `batched_mm` up to
-4 tokens, the dense form up to 1536 tokens and `grouped_mm` beyond.
+4 tokens, the dense form up to 1536 tokens per chip the experts are sliced across (6144 on four chips) and
+`grouped_mm` beyond.
 
 ### Effect on both decoders, batch 1
 
@@ -153,11 +160,14 @@ single-token step costs almost as much as a 256-token step, which would have fla
 |---|---|---|
 | 1 | 15.9 ms | 2.69 ms |
 | 2 | 22.3 ms | 5.29 ms |
-| 4 | 33.5 ms | 8.40 ms |
+| 4 | 33.5 ms | 11.0 ms |
 | 8 | 61.0 ms | 12.3 ms |
 | 16 | out of memory before the tie fix | 15.1 ms |
 
-## Reproducing
+The autoregressive batch 4 value used the dense path, which the selector chose at the time. The selector now picks
+`batched_mm` at 4 tokens; a separate run with that path and an 8-token prompt measured 8.40 ms.
+
+### Reproducing
 
 Local tests need only CPU PyTorch:
 
@@ -177,23 +187,29 @@ bash cloud/run_session2.sh     # four chips: released weights for both models
 bash cloud/run_session4.sh     # one chip: executes the notebook
 ```
 
+The saved results were produced while the code was still changing, and the commit used for each session is not
+recorded. Rerunning a session at `main` will differ where later fixes apply, for example the memory figures of
+session 1 (before the tie fix) and batch 8 and 16 on four chips.
+
 Costs are in `cloud/ledger.md`.
 
-## Upstream
+### Upstream
 
-`upstream/findings.md` lists six issues found along the way in Transformers and torch_tpu, each with a reproduction
-or a pointer to the raw log. None has been filed yet.
+`upstream/findings.md` lists six issues found along the way in Transformers and torch_tpu. Findings 1 and 6 include
+a reproduction, 2, 3 and 5 point to raw logs in `results/`, and 4 lists the failing configurations and errors
+without a script. None has been filed yet.
 
-## Limitations
+### Limitations
 
 - Text-only prompts. Image inputs go through the Transformers encoder path unchanged and are not benchmarked.
 - The sampler ported is the released one (entropy bound 0.1, temperature 0.8 to 0.4, at most 48 steps, adaptive
   stopping). The other Diffusers schedulers are not ported.
 - Tokens differ from a GPU run of Transformers because the random streams differ; equality is tested on CPU with
   shared noise.
-- The autoregressive baseline scales weakly with batch (165 to 357 tok/s from batch 1 to 16). An XProf trace at
-  batch 16 (`results/session4_preempted`) attributes the step to the dense expert matmuls and an offloaded gather;
-  a better small-batch expert path would move the crossover.
+- The autoregressive baseline scales weakly with batch (165 to 357 tok/s from batch 1 to 16), and the cause was not
+  established on four chips. An XProf trace of the 6-layer model on one chip at batch 16
+  (`results/session4_preempted`) has the dense expert matmuls and an offloaded gather as its largest entries, which
+  suggests a better small-batch expert path would move the crossover.
 - Spot v6e-4 VMs were preempted five times during this work, so the sessions were run in pieces.
 - The autoregressive baseline is plain decoding without multi-token speculative decoding, which is what the
   DiffusionGemma report compares against on GPU.
